@@ -24,7 +24,8 @@ export function requireRole(...roles) {
     if (!req.user) {
       return res.status(401).json({ error: 'No autenticado' });
     }
-    if (!roles.includes(req.user.role)) {
+    const effectiveRole = req.user.role === 'coordinator' ? 'admin' : req.user.role;
+    if (!roles.includes(effectiveRole)) {
       return res.status(403).json({ error: 'No tienes permisos para esta acción' });
     }
     next();
