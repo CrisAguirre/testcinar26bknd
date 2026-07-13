@@ -30,6 +30,10 @@ const gradeSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: null
+  },
+  examData: {
+    type: String,
+    default: null
   }
 }, {
   timestamps: {

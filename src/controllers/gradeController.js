@@ -69,11 +69,14 @@ export async function createGrade(req, res) {
 
 export async function updateGrade(req, res) {
   try {
-    const { subject, score, max_score, period, comments } = req.body;
+    const { subject, score, max_score, period, comments, examData } = req.body;
+
+    const updateFields = { subject, score, max_score, period, comments };
+    if (examData !== undefined) updateFields.examData = examData;
 
     const grade = await Grade.findByIdAndUpdate(
       req.params.id,
-      { subject, score, max_score, period, comments },
+      updateFields,
       { new: true, runValidators: true }
     ).populate('student', 'username full_name email');
 
@@ -110,6 +113,61 @@ export async function getStudentGrades(req, res) {
     res.json(grades);
   } catch (error) {
     console.error('Error al obtener calificaciones del estudiante:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function submitMyGrade(req, res) {
+  try {
+    const { subject, score, max_score, period, comments, examData } = req.body;
+
+    if (!subject || score === undefined || !period) {
+      return res.status(400).json({ error: 'subject, score y period son obligatorios' });
+    }
+
+    const grade = await Grade.create({
+      student: req.user.id,
+      subject,
+      score,
+      max_score: max_score || 100,
+      period,
+      comments: comments || null,
+      examData: examData || null
+    });
+
+    const populated = await grade.populate('student', 'username full_name email');
+
+    res.status(201).json({ message: 'Calificación registrada exitosamente', grade: populated });
+  } catch (error) {
+    console.error('Error al enviar calificación:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function updateMyGrade(req, res) {
+  try {
+    const grade = await Grade.findById(req.params.id);
+
+    if (!grade) {
+      return res.status(404).json({ error: 'Calificación no encontrada' });
+    }
+
+    if (grade.student.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'No puedes modificar una calificación que no te pertenece' });
+    }
+
+    const { examData } = req.body;
+    if (examData !== undefined) {
+      grade.examData = examData;
+    }
+
+    await grade.save();
+
+    const populated = await grade.populate('student', 'username full_name email');
+
+    res.json({ message: 'Calificación actualizada exitosamente', grade: populated });
+  } catch (error) {
+    console.error('Error al actualizar calificación:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
