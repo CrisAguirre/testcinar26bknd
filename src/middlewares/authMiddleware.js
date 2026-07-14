@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
+const JWT_SECRET = process.env.JWT_SECRET || (() => { console.warn('⚠ JWT_SECRET no configurado, usando fallback inseguro'); return 'dev-insecure-fallback'; })();
 
 export function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];

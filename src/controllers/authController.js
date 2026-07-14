@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
+const JWT_SECRET = process.env.JWT_SECRET || (() => { console.warn('⚠ JWT_SECRET no configurado, usando fallback inseguro'); return 'dev-insecure-fallback'; })();
 
 function generateToken(user) {
   return jwt.sign(
@@ -102,6 +102,41 @@ export async function getProfile(req, res) {
     res.json(user);
   } catch (error) {
     console.error('Error al obtener perfil:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function deleteUser(req, res) {
+  try {
+    const { id } = req.params;
+
+    if (req.user.id === id) {
+      return res.status(400).json({ error: 'No puedes eliminarte a ti mismo' });
+    }
+
+    const target = await User.findById(id);
+    if (!target) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    if (target.role === 'admin') {
+      return res.status(403).json({ error: 'No puedes eliminar a otro administrador' });
+    }
+
+    const Grade = (await import('../models/Grade.js')).default;
+    const gradeCount = await Grade.countDocuments({ student: id });
+    if (gradeCount > 0) {
+      await Grade.deleteMany({ student: id });
+    }
+
+    await User.findByIdAndDelete(id);
+
+    res.json({
+      message: 'Usuario eliminado exitosamente',
+      gradesDeleted: gradeCount
+    });
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 }

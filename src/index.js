@@ -40,7 +40,8 @@ app.get('/', (req, res) => {
       auth: {
         register: 'POST /api/auth/register',
         login: 'POST /api/auth/login',
-        profile: 'GET /api/auth/profile'
+        profile: 'GET /api/auth/profile',
+        deleteUser: 'DELETE /api/auth/users/:id'
       },
       grades: {
         list: 'GET /api/grades',
