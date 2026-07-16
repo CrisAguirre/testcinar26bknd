@@ -13,6 +13,7 @@ const students = [
   { code: '4', full_name: 'HAROLD ESTEBAN QUIROZ ALVAREZ', email: 'h.quiroz@cinar.edu.co', password: '@cc3504' },
   { code: '5', full_name: 'ANDRES FELIPE MEZA LEON', email: 'a.meza@cinar.edu.co', password: '@cc3505' },
   { code: '6', full_name: 'JEISON STIVEN MARTINEZ ZAMBRA', email: 'jeison.martinez@cinar.edu.co', password: '@cc3506' },
+  { code: '7', full_name: 'WILLIAM DAVID SALAS LASSO', email: 'w.salas@cinar.edu.co', password: '@cc3507' },
 ];
 
 async function seedStudents() {
