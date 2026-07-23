@@ -32,6 +32,28 @@ async function seedAdmin() {
 app.use(cors());
 app.use(express.json());
 
+app.use((req, res, next) => {
+  const start = Date.now();
+  const originalJson = res.json.bind(res);
+  res.json = function (body) {
+    const duration = Date.now() - start;
+    const userId = req.user?.id || req.user?._id || 'anonymous';
+    console.log(
+      JSON.stringify({
+        event: 'api_request',
+        method: req.method,
+        path: req.originalUrl,
+        userId,
+        status: res.statusCode,
+        durationMs: duration,
+        timestamp: new Date().toISOString()
+      })
+    );
+    return originalJson(body);
+  };
+  next();
+});
+
 app.get('/', (req, res) => {
   res.json({
     message: 'API de Calificaciones - Cinar Sistemas 2026',

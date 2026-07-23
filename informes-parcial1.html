@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Informes Parcial 1 - Cinar Sistemas</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #1f2937; background: #f5f7fa; }
+    .report { background: white; border-radius: 12px; padding: 30px; max-width: 800px; margin: 20px auto; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .header { text-align: center; border-bottom: 2px solid #e5e7eb; padding-bottom: 15px; margin-bottom: 20px; }
+    .header h1 { margin: 0; font-size: 1.2rem; color: #4075a6; }
+    .header h2 { margin: 5px 0 0; font-size: 1rem; color: #6b7280; }
+    .student-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem; margin-bottom: 20px; background: #f8fafc; padding: 12px; border-radius: 8px; }
+    .scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .score-card { text-align: center; padding: 15px; border-radius: 10px; background: #f0f7ff; border: 1px solid #dbeafe; }
+    .score-card.total { background: #f0fdf4; border-color: #bbf7d0; }
+    .score-card.percent { background: #fefce8; border-color: #fef08a; }
+    .score-value { font-size: 1.5rem; font-weight: 800; color: #1d4ed8; }
+    .score-card.total .score-value { color: #16a34a; }
+    .score-card.percent .score-value { color: #d97706; }
+    .score-label { font-size: 0.75rem; color: #6b7280; font-weight: 600; margin-top: 4px; }
+    .section { margin-bottom: 20px; }
+    .section h3 { font-size: 1rem; margin: 0 0 10px; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { background: #f3f4f6; text-align: left; padding: 8px 10px; font-weight: 700; color: #555; border: 1px solid #e5e7eb; }
+    td { padding: 8px 10px; border: 1px solid #e5e7eb; }
+    .pending { color: #d97706; font-weight: 600; }
+    .mc-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; font-size: 0.85rem; border-bottom: 1px solid #f3f4f6; }
+    .mc-item.correct { background: #f0fdf4; }
+    .mc-item.incorrect { background: #fef2f2; }
+    .mc-icon { font-size: 1rem; }
+    .mc-num { font-weight: 700; color: #6b7280; min-width: 28px; }
+    .footer { text-align: center; font-size: 0.78rem; color: #9ca3af; margin-top: 20px; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+    .page-break { page-break-after: always; border-bottom: 2px dashed #d1d5db; margin: 10px auto; max-width: 800px; }
+    @media print { body { background: white; padding: 0; } .report { box-shadow: none; margin: 0 auto; } }
+  </style>
+</head>
+<body>
+  
+    <div class="report">
+      <div class="header">
+        <h1>Cinar Sistemas — Informe de Evaluación</h1>
+        <h2>Desarrollo Web 1 - Parcial 1</h2>
+      </div>
+      <div class="student-info">
+        <div><strong>Estudiante:</strong> HAROLD ESTEBAN QUIROZ ALVAREZ</div>
+        <div><strong>Intento:</strong> 3 (Intento 3 (Evaluación))</div>
+        <div><strong>Fecha:</strong> 22/7/2026, 7:29:34 p. m.</div>
+        <div><strong>Tiempo usado:</strong> 32:15</div>
+        <div><strong>Cambios de pestaña:</strong> 2</div>
+      </div>
+      <div class="scores">
+        <div class="score-card">
+          <div class="score-value">14/17</div>
+          <div class="score-label">Selección múltiple</div>
+        </div>
+        <div class="score-card">
+          <div class="score-value">15/15</div>
+          <div class="score-label">Preguntas abiertas</div>
+        </div>
+        <div class="score-card total">
+          <div class="score-value">29/32</div>
+          <div class="score-label">Puntaje total</div>
+        </div>
+        <div class="score-card percent">
+          <div class="score-value">90.6%</div>
+          <div class="score-label">Porcentaje</div>
+        </div>
+      </div>
+      <div class="section">
+        <h3>Detalle de preguntas abiertas</h3>
+        <table class="open-table"><tr><th>#</th><th>Pregunta</th><th>Respuesta</th><th>Puntaje</th></tr><tr>
+        <td>1</td>
+        <td>¿Cuáles son las IAs que conoce o con las que ha trabajado? Menciona al menos tres y explica brevemente para qué las has usado.</td>
+        <td>gemini pra crear musica 
+chat gpt para preguntas 
+dola para uso de hogar </td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>2</td>
+        <td>¿Qué es un algoritmo? Da un ejemplo de la vida cotidiana.</td>
+        <td>es un conjunto de intrucciones espesificas para que funcione un sitemamas grande 
+1 levantarme 
+2hacer la cama 
+3 alistarse 
+4 desayunar 
+5 salir a trabajar 
+6 fin </td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>3</td>
+        <td>¿Qué es un stack tecnológico? Explica con un ejemplo concreto.</td>
+        <td>conbinacion de tecnologia y herramientas ultilizadas para contruir la aplicacion 
+ejemplo
+frontend lo que ve el usuario
+backend logica del servidor 
+base de datos donde se guardan los datos
+</td>
+        <td class="">5/5</td>
+      </tr></table>
+      </div>
+      <div class="section">
+        <h3>Resumen MC</h3>
+        <p>Preguntas de selección múltiple: <strong>14/17 correctas</strong></p>
+        <div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P1:</span>
+            <span>¿Qué comando permite crear una nueva rama (branch) en Git?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P2:</span>
+            <span>¿Qué unidad CSS es relativa al tamaño de la ventana gráfica (viewport)?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P3:</span>
+            <span>¿Cuál es la diferencia principal entre Svelte y frameworks como React o Vue?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P4:</span>
+            <span>¿Cuáles son los verbos HTTP más comunes en una API REST?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P5:</span>
+            <span>¿Cuál es el rol del Product Owner en SCRUM?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P6:</span>
+            <span>¿Qué etiqueta se usa dentro de un componente `.svelte` para escribir la lógica JavaScript?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P7:</span>
+            <span>¿Qué archivo se genera automáticamente al crear un proyecto SvelteKit con TypeScript?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P8:</span>
+            <span>¿Cuál es el enfoque recomendado al diseñar responsive?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P9:</span>
+            <span>¿Qué comando se usa para enviar los commits locales al repositorio remoto?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P10:</span>
+            <span>¿Cuál es la función de la carpeta `src/routes/` en un proyecto SvelteKit?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P11:</span>
+            <span>¿Qué significa el término &quot;stack tecnológico&quot; en desarrollo de software?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P12:</span>
+            <span>¿Qué es Node.js?</span>
+          </div><div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P13:</span>
+            <span>¿Qué artefacto muestra un acumulativo del trabajo hecho día a día?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P14:</span>
+            <span>¿Qué convención de nombres se usa para definir el componente de layout en SvelteKit?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P15:</span>
+            <span>¿Qué comando de Git se usa para crear una copia local de un repositorio remoto?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P16:</span>
+            <span>¿Qué es SCRUM?</span>
+          </div><div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P17:</span>
+            <span>¿Qué etiqueta se usa para renderizar contenido condicionalmente en Svelte?</span>
+          </div>
+      </div>
+      <div class="footer">
+        <p>Generado el 23/7/2026, 1:38:05 a. m. — Cinar Sistemas 2026</p>
+      </div>
+    </div>
+    <div class="page-break"></div>
+  
+
+    <div class="report">
+      <div class="header">
+        <h1>Cinar Sistemas — Informe de Evaluación</h1>
+        <h2>Desarrollo Web 1 - Parcial 1</h2>
+      </div>
+      <div class="student-info">
+        <div><strong>Estudiante:</strong> DAVID ALEJANDRO GARCIA ENRIQUEZ</div>
+        <div><strong>Intento:</strong> 4 (Intento 4 (Evaluación))</div>
+        <div><strong>Fecha:</strong> 22/7/2026, 7:00:30 p. m.</div>
+        <div><strong>Tiempo usado:</strong> 12:45</div>
+        <div><strong>Cambios de pestaña:</strong> 0</div>
+      </div>
+      <div class="scores">
+        <div class="score-card">
+          <div class="score-value">13/13</div>
+          <div class="score-label">Selección múltiple</div>
+        </div>
+        <div class="score-card">
+          <div class="score-value">35/35</div>
+          <div class="score-label">Preguntas abiertas</div>
+        </div>
+        <div class="score-card total">
+          <div class="score-value">48/48</div>
+          <div class="score-label">Puntaje total</div>
+        </div>
+        <div class="score-card percent">
+          <div class="score-value">100.0%</div>
+          <div class="score-label">Porcentaje</div>
+        </div>
+      </div>
+      <div class="section">
+        <h3>Detalle de preguntas abiertas</h3>
+        <table class="open-table"><tr><th>#</th><th>Pregunta</th><th>Respuesta</th><th>Puntaje</th></tr><tr>
+        <td>1</td>
+        <td>¿Qué tipos de bases de datos existen? Menciona y explica brevemente al menos tres tipos.</td>
+        <td>Bases de datos relacionales
+utilizan tablas para poder relacionar los datos para encontrar una respuesta 
+Bases de datos no relacionales
+van directamenta a buscar donde esta el dato a buscar</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>2</td>
+        <td>¿Qué es un algoritmo? Da un ejemplo de la vida cotidiana.</td>
+        <td>un algoritmo es un conjundo de pasos o reglas a seguir por ejemplo
+lavarse los dientes
+1 Tomar el cepillo de dientes
+2 Aplicarle crema de dientes
+3 Cepillarse los dientes
+3 Lavar el cepillo y guardarlo</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>3</td>
+        <td>¿Qué tipo de proyecto le gustaría crear para aplicar los conceptos de stack y arquitectura? Describe brevemente la idea.</td>
+        <td>Quiero realizar una tienda virtual de productos para moteros para poder generar ventas y dar a conocer el negocio</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>4</td>
+        <td>¿Qué es backend? Explica su función en una aplicación web.</td>
+        <td>Es la parte logica de la pagina que el usuario no puede ver </td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>5</td>
+        <td>¿Qué es el testing en desarrollo de software? Explica su importancia.</td>
+        <td>es la prueba de errores para poder corregirlos para que la pagina funcione bien</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>6</td>
+        <td>¿Qué es un repositorio? Explica la diferencia entre un repositorio local y uno remoto en Git.</td>
+        <td>la diferencia es que en el git puedes compartir las librerias para trabajar en conjunto</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>7</td>
+        <td>¿Qué es una metodología de desarrollo? Explica su importancia en la ingeniería de software.</td>
+        <td>es un conjunto de procesos tecnicas y reglas que guian la planificacion el diseno la programacion el mantenimiento y las pruebas de un software</td>
+        <td class="">5/5</td>
+      </tr></table>
+      </div>
+      <div class="section">
+        <h3>Resumen MC</h3>
+        <p>Preguntas de selección múltiple: <strong>13/13 correctas</strong></p>
+        <div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P1:</span>
+            <span>¿Cuál es la diferencia principal entre Svelte y frameworks como React o Vue?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P2:</span>
+            <span>¿Qué directiva se usa en Svelte para enlazar un valor de un input a una variable reactiva?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P3:</span>
+            <span>¿Qué archivo se genera automáticamente al crear un proyecto SvelteKit con TypeScript?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P4:</span>
+            <span>¿Qué hace `$:` en Svelte?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P5:</span>
+            <span>¿Cuál de los siguientes es un principio de SCRUM?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P6:</span>
+            <span>¿Qué comando de Git se usa para crear una copia local de un repositorio remoto?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P7:</span>
+            <span>¿Quién es la persona que asegura el seguimiento de la metodología SCRUM y guía las reuniones?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P8:</span>
+            <span>¿Qué comando permite crear una nueva rama (branch) en Git?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P9:</span>
+            <span>¿Cuál es la función de la carpeta `src/routes/` en un proyecto SvelteKit?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P10:</span>
+            <span>¿Qué unidad CSS es relativa al tamaño de la ventana gráfica (viewport)?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P11:</span>
+            <span>En una arquitectura de tres capas (three-tier), ¿cuáles son las capas?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P12:</span>
+            <span>¿Cuál es el enfoque recomendado al diseñar responsive?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P13:</span>
+            <span>¿Cuál es el propósito de la carpeta `src/lib/` en SvelteKit?</span>
+          </div>
+      </div>
+      <div class="footer">
+        <p>Generado el 23/7/2026, 1:38:05 a. m. — Cinar Sistemas 2026</p>
+      </div>
+    </div>
+    <div class="page-break"></div>
+  
+
+    <div class="report">
+      <div class="header">
+        <h1>Cinar Sistemas — Informe de Evaluación</h1>
+        <h2>Desarrollo Web 1 - Parcial 1</h2>
+      </div>
+      <div class="student-info">
+        <div><strong>Estudiante:</strong> JAIRO DANIEL ZAMBRANO VALLEID</div>
+        <div><strong>Intento:</strong> 2 (Intento 2 (Preparación))</div>
+        <div><strong>Fecha:</strong> 22/7/2026, 7:11:45 p. m.</div>
+        <div><strong>Tiempo usado:</strong> 23:08</div>
+        <div><strong>Cambios de pestaña:</strong> 0</div>
+      </div>
+      <div class="scores">
+        <div class="score-card">
+          <div class="score-value">14/15</div>
+          <div class="score-label">Selección múltiple</div>
+        </div>
+        <div class="score-card">
+          <div class="score-value">25/25</div>
+          <div class="score-label">Preguntas abiertas</div>
+        </div>
+        <div class="score-card total">
+          <div class="score-value">39/40</div>
+          <div class="score-label">Puntaje total</div>
+        </div>
+        <div class="score-card percent">
+          <div class="score-value">97.5%</div>
+          <div class="score-label">Porcentaje</div>
+        </div>
+      </div>
+      <div class="section">
+        <h3>Detalle de preguntas abiertas</h3>
+        <table class="open-table"><tr><th>#</th><th>Pregunta</th><th>Respuesta</th><th>Puntaje</th></tr><tr>
+        <td>1</td>
+        <td>¿Cuáles son las IAs que conoce o con las que ha trabajado? Menciona al menos tres y explica brevemente para qué las has usado.</td>
+        <td>chat gpt,gemini,copilot: el uso que le eh dado a estas IAs ha sido mas que todo en investigacion, y solucion de problemas cotidianos, </td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>2</td>
+        <td>¿Qué es frontend? Explica su función en una aplicación web.</td>
+        <td>frontend es todo lo visible de una pagina, y todo lo que el usuario puede interactuar con la interfaz</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>3</td>
+        <td>¿Qué es un repositorio? Explica la diferencia entre un repositorio local y uno remoto en Git.</td>
+        <td>la mayor diferencia que hay entre repositorio local o un remoto es el que el remoto se lo puede trabajar en la nube, y varios programadores a la vez, de ese modo actualizándose en tiempo real de los cambios efectuados en el codigo</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>4</td>
+        <td>¿Qué tipo de proyecto le gustaría crear para aplicar los conceptos de stack y arquitectura? Describe brevemente la idea.</td>
+        <td>me gustaría crear una pagina web estilo de una tienda, donde tenga un frontend que los usuarios pueda visualizar productos, y backend donde pueda gestionar los datos ej: el inventario, esto me permitiría manejar los conceptos de stack y arquitectura entre cliente y servidor  </td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>5</td>
+        <td>¿Qué tipos de bases de datos existen? Menciona y explica brevemente al menos tres tipos.</td>
+        <td>las que conozco, serian
+bases de datos relacionales,
+bases de datos noSQL
+bases de datos orientadas a los grafos</td>
+        <td class="">5/5</td>
+      </tr></table>
+      </div>
+      <div class="section">
+        <h3>Resumen MC</h3>
+        <p>Preguntas de selección múltiple: <strong>14/15 correctas</strong></p>
+        <div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P1:</span>
+            <span>¿Qué artefacto muestra un acumulativo del trabajo hecho día a día?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P2:</span>
+            <span>¿Qué comando se utiliza para crear un nuevo proyecto Svelte con la CLI oficial?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P3:</span>
+            <span>¿Qué tipo de requerimientos se recomienda para aplicar SCRUM?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P4:</span>
+            <span>¿Qué tipo de arquitectura divide la aplicación en servicios independientes y autónomos?</span>
+          </div><div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P5:</span>
+            <span>¿Cuáles son los verbos HTTP más comunes en una API REST?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P6:</span>
+            <span>¿Cuál es la diferencia principal entre Svelte y frameworks como React o Vue?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P7:</span>
+            <span>¿Cuál es la función de la carpeta `src/routes/` en un proyecto SvelteKit?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P8:</span>
+            <span>¿Qué archivo actúa como plantilla HTML principal en SvelteKit?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P9:</span>
+            <span>¿Cómo se agregan todos los archivos modificados al área de staging?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P10:</span>
+            <span>¿Qué comando permite ver el estado actual del repositorio (archivos modificados, agregados, etc.)?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P11:</span>
+            <span>¿Cómo se aplican estilos específicos a un componente en Svelte?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P12:</span>
+            <span>¿Cuál de los siguientes NO es un principio fundamental del diseño responsive?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P13:</span>
+            <span>¿Qué etiqueta HTML es esencial en el `&lt;head&gt;` para habilitar el diseño responsive en dispositivos móviles?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P14:</span>
+            <span>¿Qué es SCRUM?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P15:</span>
+            <span>¿Qué etiqueta se usa para renderizar contenido condicionalmente en Svelte?</span>
+          </div>
+      </div>
+      <div class="footer">
+        <p>Generado el 23/7/2026, 1:38:05 a. m. — Cinar Sistemas 2026</p>
+      </div>
+    </div>
+    <div class="page-break"></div>
+  
+
+    <div class="report">
+      <div class="header">
+        <h1>Cinar Sistemas — Informe de Evaluación</h1>
+        <h2>Desarrollo Web 1 - Parcial 1</h2>
+      </div>
+      <div class="student-info">
+        <div><strong>Estudiante:</strong> ANDRES FELIPE MEZA LEON</div>
+        <div><strong>Intento:</strong> 1 (Intento 1 (Preparación))</div>
+        <div><strong>Fecha:</strong> 22/7/2026, 7:28:44 p. m.</div>
+        <div><strong>Tiempo usado:</strong> 33:27</div>
+        <div><strong>Cambios de pestaña:</strong> 0</div>
+      </div>
+      <div class="scores">
+        <div class="score-card">
+          <div class="score-value">11/14</div>
+          <div class="score-label">Selección múltiple</div>
+        </div>
+        <div class="score-card">
+          <div class="score-value">28/30</div>
+          <div class="score-label">Preguntas abiertas</div>
+        </div>
+        <div class="score-card total">
+          <div class="score-value">39/44</div>
+          <div class="score-label">Puntaje total</div>
+        </div>
+        <div class="score-card percent">
+          <div class="score-value">88.6%</div>
+          <div class="score-label">Porcentaje</div>
+        </div>
+      </div>
+      <div class="section">
+        <h3>Detalle de preguntas abiertas</h3>
+        <table class="open-table"><tr><th>#</th><th>Pregunta</th><th>Respuesta</th><th>Puntaje</th></tr><tr>
+        <td>1</td>
+        <td>¿Qué es un framework? Da un ejemplo de framework frontend y uno backend.</td>
+        <td>conjunto de herramientas logicas frontend es la parte que usa el usuario y backend es la parte que funciona el servidor y maneja la logica</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>2</td>
+        <td>¿Qué es frontend? Explica su función en una aplicación web.</td>
+        <td>es el q muestra todo lo q vas a interactuar en una pagina web como el inicio busqueda interactuar con imagenes</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>3</td>
+        <td>¿Cuáles son los componentes de una metodología Scrum? Menciona y explica brevemente los roles, artefactos y eventos principales.</td>
+        <td>los componentes de scrum son equipos de desarrollo y artefactos owner y backing</td>
+        <td class="">4/5</td>
+      </tr><tr>
+        <td>4</td>
+        <td>¿Cuáles son las IAs que conoce o con las que ha trabajado? Menciona al menos tres y explica brevemente para qué las has usado.</td>
+        <td>chatgpt: mayor mente para programar y resolver soluciones en tareas, recraft: para crear imagenes con vectores, gemini:para crear codigos para visual studio</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>5</td>
+        <td>¿Qué es una metodología de desarrollo? Explica su importancia en la ingeniería de software.</td>
+        <td>scrum como una metodologia agil para crear un software de una manera mas rapida e eficiente</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>6</td>
+        <td>¿Qué es un stack tecnológico? Explica con un ejemplo concreto.</td>
+        <td>son herramientas q se utilizan para desarrollar una aplicacion como la de  SVELTE</td>
+        <td class="">4/5</td>
+      </tr></table>
+      </div>
+      <div class="section">
+        <h3>Resumen MC</h3>
+        <p>Preguntas de selección múltiple: <strong>11/14 correctas</strong></p>
+        <div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P1:</span>
+            <span>En una arquitectura de tres capas (three-tier), ¿cuáles son las capas?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P2:</span>
+            <span>¿Qué bandera se usa en `sv create` para instalar las dependencias automáticamente?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P3:</span>
+            <span>¿Cuál es el enfoque recomendado al diseñar responsive?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P4:</span>
+            <span>¿Qué directiva se usa en Svelte para enlazar un valor de un input a una variable reactiva?</span>
+          </div><div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P5:</span>
+            <span>¿Cuál es la diferencia principal entre Svelte y frameworks como React o Vue?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P6:</span>
+            <span>¿Cuál de los siguientes es un principio de SCRUM?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P7:</span>
+            <span>¿Cuál es la función de la carpeta `src/routes/` en un proyecto SvelteKit?</span>
+          </div><div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P8:</span>
+            <span>En la estructura de SvelteKit, ¿qué archivo se usa para configurar el comportamiento del servidor de desarrollo y build?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P9:</span>
+            <span>¿Cuál es la ventaja principal de usar unidades relativas (%, em, rem) sobre unidades absolutas (px)?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P10:</span>
+            <span>¿Qué comando permite crear una nueva rama (branch) en Git?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P11:</span>
+            <span>¿Qué etiqueta se usa para renderizar contenido condicionalmente en Svelte?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P12:</span>
+            <span>¿Cuál de los siguientes es un ejemplo de stack tecnológico completo?</span>
+          </div><div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P13:</span>
+            <span>¿Qué comando guarda los cambios en el repositorio local con un mensaje descriptivo?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P14:</span>
+            <span>¿Cuál es la diferencia entre `git pull` y `git fetch`?</span>
+          </div>
+      </div>
+      <div class="footer">
+        <p>Generado el 23/7/2026, 1:38:05 a. m. — Cinar Sistemas 2026</p>
+      </div>
+    </div>
+    <div class="page-break"></div>
+  
+
+    <div class="report">
+      <div class="header">
+        <h1>Cinar Sistemas — Informe de Evaluación</h1>
+        <h2>Desarrollo Web 1 - Parcial 1</h2>
+      </div>
+      <div class="student-info">
+        <div><strong>Estudiante:</strong> JEISON STIVEN MARTINEZ ZAMBRA</div>
+        <div><strong>Intento:</strong> 1 (Intento 1 (Preparación))</div>
+        <div><strong>Fecha:</strong> 22/7/2026, 7:49:23 p. m.</div>
+        <div><strong>Tiempo usado:</strong> 54:17</div>
+        <div><strong>Cambios de pestaña:</strong> 0</div>
+      </div>
+      <div class="scores">
+        <div class="score-card">
+          <div class="score-value">13/15</div>
+          <div class="score-label">Selección múltiple</div>
+        </div>
+        <div class="score-card">
+          <div class="score-value">14/25</div>
+          <div class="score-label">Preguntas abiertas</div>
+        </div>
+        <div class="score-card total">
+          <div class="score-value">27/40</div>
+          <div class="score-label">Puntaje total</div>
+        </div>
+        <div class="score-card percent">
+          <div class="score-value">67.5%</div>
+          <div class="score-label">Porcentaje</div>
+        </div>
+      </div>
+      <div class="section">
+        <h3>Detalle de preguntas abiertas</h3>
+        <table class="open-table"><tr><th>#</th><th>Pregunta</th><th>Respuesta</th><th>Puntaje</th></tr><tr>
+        <td>1</td>
+        <td>¿Qué es un framework? Da un ejemplo de framework frontend y uno backend.</td>
+        <td>un framework es un conjunto de </td>
+        <td class="">1/5</td>
+      </tr><tr>
+        <td>2</td>
+        <td>¿Qué es un lenguaje de programación? Menciona al menos tres que conozcas.</td>
+        <td>un lenguaje de programación es un sistema que permite que a un programador comunicarse con una computadora dándole instrucciones de que hacer, los 3 que conozco son, Java,python,typeEscritp</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>3</td>
+        <td>¿Qué es un repositorio? Explica la diferencia entre un repositorio local y uno remoto en Git.</td>
+        <td>un repositorio es </td>
+        <td class="">1/5</td>
+      </tr><tr>
+        <td>4</td>
+        <td>¿Cuáles son las IAs que conoce o con las que ha trabajado? Menciona al menos tres y explica brevemente para qué las has usado.</td>
+        <td>las que conozco son, Gemini, chatgpt,copilot,las uso para programar, crear imágenes y diseñar un poco,</td>
+        <td class="">5/5</td>
+      </tr><tr>
+        <td>5</td>
+        <td>¿Qué es un algoritmo? Da un ejemplo de la vida cotidiana.</td>
+        <td>un algoritmo es un lenguaje </td>
+        <td class="">2/5</td>
+      </tr></table>
+      </div>
+      <div class="section">
+        <h3>Resumen MC</h3>
+        <p>Preguntas de selección múltiple: <strong>13/15 correctas</strong></p>
+        <div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P1:</span>
+            <span>¿Qué etiqueta se usa dentro de un componente `.svelte` para escribir la lógica JavaScript?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P2:</span>
+            <span>¿Qué comando se utiliza para crear un nuevo proyecto Svelte con la CLI oficial?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P3:</span>
+            <span>¿Qué bandera se usa en `sv create` para instalar las dependencias automáticamente?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P4:</span>
+            <span>¿Cuál de los siguientes es un principio de SCRUM?</span>
+          </div><div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P5:</span>
+            <span>¿Qué tipo de requerimientos se recomienda para aplicar SCRUM?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P6:</span>
+            <span>¿Cuál de los siguientes es un ejemplo de stack tecnológico completo?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P7:</span>
+            <span>¿Qué significa el término &quot;stack tecnológico&quot; en desarrollo de software?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P8:</span>
+            <span>¿Cuál de los siguientes NO es un principio fundamental del diseño responsive?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P9:</span>
+            <span>¿Cuál es la función de la carpeta `src/routes/` en un proyecto SvelteKit?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P10:</span>
+            <span>¿Qué hace `$:` en Svelte?</span>
+          </div><div class="mc-item incorrect">
+            <span class="mc-icon">❌</span>
+            <span class="mc-num">P11:</span>
+            <span>¿Cuál es el rol del Product Owner en SCRUM?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P12:</span>
+            <span>¿Qué comando se usa para enviar los commits locales al repositorio remoto?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P13:</span>
+            <span>¿Qué unidad CSS es relativa al tamaño de la ventana gráfica (viewport)?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P14:</span>
+            <span>¿Qué archivo actúa como plantilla HTML principal en SvelteKit?</span>
+          </div><div class="mc-item correct">
+            <span class="mc-icon">✅</span>
+            <span class="mc-num">P15:</span>
+            <span>¿Qué comando permite ver el estado actual del repositorio (archivos modificados, agregados, etc.)?</span>
+          </div>
+      </div>
+      <div class="footer">
+        <p>Generado el 23/7/2026, 1:38:05 a. m. — Cinar Sistemas 2026</p>
+      </div>
+    </div>
+    <div class="page-break"></div>
+  
+</body>
+</html>
