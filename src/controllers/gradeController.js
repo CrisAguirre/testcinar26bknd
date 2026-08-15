@@ -1,5 +1,7 @@
 import Grade from '../models/Grade.js';
 import User from '../models/User.js';
+import { KNOWN_EXAM_SUBJECTS, isSubmissionAllowed } from '../config/schedule.js';
+import { nowColombia } from '../config/timezone.js';
 
 export async function getAllGrades(req, res) {
   try {
@@ -119,10 +121,22 @@ export async function getStudentGrades(req, res) {
 
 export async function submitMyGrade(req, res) {
   try {
-    const { subject, score, max_score, period, comments, examData } = req.body;
+    const { subject, score, max_score, period, comments, examData, submittedAt } = req.body;
 
     if (!subject || score === undefined || !period) {
       return res.status(400).json({ error: 'subject, score y period son obligatorios' });
+    }
+
+    if (KNOWN_EXAM_SUBJECTS.has(subject)) {
+      const user = await User.findById(req.user.id).select('email role');
+      const isPrivileged = user && ['admin', 'coordinator', 'teacher'].includes(user.role);
+      if (!isPrivileged) {
+        const usedAttempts = await Grade.countDocuments({ student: req.user.id, subject });
+        const decision = isSubmissionAllowed(subject, user.email, usedAttempts, submittedAt, nowColombia());
+        if (!decision.allowed) {
+          return res.status(403).json({ error: decision.reason || 'No es posible guardar esta evaluación en este momento' });
+        }
+      }
     }
 
     const grade = await Grade.create({

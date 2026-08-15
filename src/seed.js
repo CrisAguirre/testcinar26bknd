@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 config();
+import './config/timezone.js';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import User from './models/User.js';
@@ -15,6 +16,14 @@ const students = [
   { code: '6', full_name: 'JEISON STIVEN MARTINEZ ZAMBRA', email: 'jeison.martinez@cinar.edu.co', password: '@cc3506' },
   { code: '7', full_name: 'WILLIAM DAVID SALAS LASSO', email: 'w.salas@cinar.edu.co', password: '@cc3507' },
 ];
+
+const coordinator = {
+  username: 'coordinacion',
+  email: 'coordinacion@cinarsistemas.edu.co',
+  full_name: 'Coordinación Cinar Sistemas',
+  password: '@cc3500',
+  role: 'coordinator'
+};
 
 async function seedStudents() {
   await mongoose.connect(MONGODB_URI);
@@ -35,6 +44,21 @@ async function seedStudents() {
     } else {
       console.log(`Ya existe: ${s.email}`);
     }
+  }
+
+  const coordExists = await User.findOne({ email: coordinator.email });
+  if (!coordExists) {
+    const hashedPassword = await bcrypt.hash(coordinator.password, 10);
+    await User.create({
+      username: coordinator.username,
+      email: coordinator.email,
+      password: hashedPassword,
+      full_name: coordinator.full_name,
+      role: coordinator.role
+    });
+    console.log(`Creado: ${coordinator.full_name} (${coordinator.email} / ${coordinator.password})`);
+  } else {
+    console.log(`Ya existe: ${coordinator.email}`);
   }
 
   console.log('Seed completado');

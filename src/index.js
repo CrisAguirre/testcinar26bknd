@@ -1,3 +1,4 @@
+import './config/timezone.js';
 import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
@@ -8,6 +9,7 @@ import { connectDB } from './config/database.js';
 import User from './models/User.js';
 import authRoutes from './routes/auth.js';
 import gradeRoutes from './routes/grades.js';
+import scheduleRoutes from './routes/schedule.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -72,6 +74,9 @@ app.get('/', (req, res) => {
         create: 'POST /api/grades',
         update: 'PUT /api/grades/:id',
         delete: 'DELETE /api/grades/:id'
+      },
+      schedule: {
+        status: 'GET /api/schedule'
       }
     }
   });
@@ -79,6 +84,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/grades', gradeRoutes);
+app.use('/api/schedule', scheduleRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
