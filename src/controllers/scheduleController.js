@@ -4,6 +4,7 @@ import { nowColombia, colombiaString } from '../config/timezone.js';
 import {
   EXAM_SUBJECTS,
   getParcial2Window,
+  getParcial2Override,
   getTallerOverride
 } from '../config/schedule.js';
 
@@ -22,13 +23,15 @@ export async function getSchedule(req, res) {
     }
 
     const tallerOverride = getTallerOverride(user.email);
+    const p2Override = getParcial2Override(user.email);
 
     res.json({
       serverNow: now.getTime(),
       colombiaTime: colombiaString(now),
       parcial2: {
-        window: getParcial2Window(now),
-        usedAttempts: usedBySubject[EXAM_SUBJECTS.PARCIAL2] || 0
+        window: getParcial2Window(now, user.email),
+        usedAttempts: usedBySubject[EXAM_SUBJECTS.PARCIAL2] || 0,
+        override: p2Override ? { evalEnd: p2Override.evalEnd } : null
       },
       taller: {
         deadline: tallerOverride ? tallerOverride.deadline : null,

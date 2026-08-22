@@ -23,46 +23,72 @@ export const PARCIAL2_MAX_TOTAL = PARCIAL2_MAX_SIMULACROS + PARCIAL2_MAX_EVALUAC
 // Extensiones por estudiante (email -> config).
 // Taller 1 (Taller de Algoritmia) habilitado para Diego Azain hasta el
 // miércoles 19 de agosto de 2026 a las 4:00 PM hora Colombia.
+// Parcial 2 habilitado para Harold Esteban Quiroz Álvarez desde el
+// sábado 22 hasta el jueves 27 de agosto de 2026, 11:59 PM hora Colombia
+// (3 simulacros + 1 evaluación).
 export const STUDENT_OVERRIDES = {
   'd.azain@cinar.edu.co': {
     tallerDeadline: new Date(2026, 7, 19, 16, 0),
     tallerMaxAttempts: 2
+  },
+  'h.quiroz@cinar.edu.co': {
+    parcial2SimulacroStart: new Date(2026, 7, 22, 0, 0),
+    parcial2EvalStart: new Date(2026, 7, 22, 0, 0),
+    parcial2EvalEnd: new Date(2026, 7, 27, 23, 59)
   }
 };
 
-export function getParcial2Window(now = nowColombia()) {
-  if (now < PARCIAL2_SIMULACRO_START) {
+export function getParcial2Override(email) {
+  const key = (email || '').toLowerCase();
+  const override = STUDENT_OVERRIDES[key];
+  if (!override || !override.parcial2EvalEnd) return null;
+  return {
+    email: key,
+    simulacroStart: (override.parcial2SimulacroStart || PARCIAL2_SIMULACRO_START).getTime(),
+    evalStart: (override.parcial2EvalStart || PARCIAL2_EVAL_START).getTime(),
+    evalEnd: override.parcial2EvalEnd.getTime()
+  };
+}
+
+export function getParcial2Window(now = nowColombia(), userEmail = '') {
+  const override = getParcial2Override(userEmail);
+  const simStartMs = override ? override.simulacroStart : PARCIAL2_SIMULACRO_START.getTime();
+  const evalStartMs = override ? override.evalStart : PARCIAL2_EVAL_START.getTime();
+  const evalEndMs = override ? override.evalEnd : PARCIAL2_EVAL_END.getTime();
+  const nowMs = now instanceof Date ? now.getTime() : now;
+
+  if (nowMs < simStartMs) {
     return {
       kind: 'closed',
       label: 'El Parcial 2 aún no está habilitado',
       maxAttempts: 0,
-      simStart: PARCIAL2_SIMULACRO_START.getTime(),
-      evalStart: PARCIAL2_EVAL_START.getTime(),
-      evalEnd: PARCIAL2_EVAL_END.getTime(),
+      simStart: simStartMs,
+      evalStart: evalStartMs,
+      evalEnd: evalEndMs,
       maxSimulacros: PARCIAL2_MAX_SIMULACROS,
       maxEvaluaciones: PARCIAL2_MAX_EVALUACIONES
     };
   }
-  if (now < PARCIAL2_EVAL_START) {
+  if (nowMs < evalStartMs) {
     return {
       kind: 'simulacro',
       label: 'Simulacros (hasta las 18:45)',
       maxAttempts: PARCIAL2_MAX_SIMULACROS,
-      simStart: PARCIAL2_SIMULACRO_START.getTime(),
-      evalStart: PARCIAL2_EVAL_START.getTime(),
-      evalEnd: PARCIAL2_EVAL_END.getTime(),
+      simStart: simStartMs,
+      evalStart: evalStartMs,
+      evalEnd: evalEndMs,
       maxSimulacros: PARCIAL2_MAX_SIMULACROS,
       maxEvaluaciones: PARCIAL2_MAX_EVALUACIONES
     };
   }
-  if (now <= PARCIAL2_EVAL_END) {
+  if (nowMs <= evalEndMs) {
     return {
       kind: 'evaluacion',
-      label: 'Evaluación (18:45 - 20:00)',
+      label: override ? 'Habilitación especial activa' : 'Evaluación (18:45 - 20:00)',
       maxAttempts: PARCIAL2_MAX_TOTAL,
-      simStart: PARCIAL2_SIMULACRO_START.getTime(),
-      evalStart: PARCIAL2_EVAL_START.getTime(),
-      evalEnd: PARCIAL2_EVAL_END.getTime(),
+      simStart: simStartMs,
+      evalStart: evalStartMs,
+      evalEnd: evalEndMs,
       maxSimulacros: PARCIAL2_MAX_SIMULACROS,
       maxEvaluaciones: PARCIAL2_MAX_EVALUACIONES
     };
@@ -71,9 +97,9 @@ export function getParcial2Window(now = nowColombia()) {
     kind: 'closed',
     label: 'El Parcial 2 ha finalizado',
     maxAttempts: PARCIAL2_MAX_TOTAL,
-    simStart: PARCIAL2_SIMULACRO_START.getTime(),
-    evalStart: PARCIAL2_EVAL_START.getTime(),
-    evalEnd: PARCIAL2_EVAL_END.getTime(),
+    simStart: simStartMs,
+    evalStart: evalStartMs,
+    evalEnd: evalEndMs,
     maxSimulacros: PARCIAL2_MAX_SIMULACROS,
     maxEvaluaciones: PARCIAL2_MAX_EVALUACIONES
   };
@@ -95,7 +121,7 @@ export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedA
 
   if (subject === EXAM_SUBJECTS.PARCIAL2) {
     const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;
-    const window = getParcial2Window(new Date(checkMs));
+    const window = getParcial2Window(new Date(checkMs), userEmail);
     if (window.kind === 'closed') {
       return { allowed: false, reason: window.label };
     }
