@@ -108,7 +108,7 @@ export function getParcial2Window(now = nowColombia(), userEmail = '') {
 export function getTallerOverride(email) {
   const key = (email || '').toLowerCase();
   const override = STUDENT_OVERRIDES[key];
-  if (!override) return null;
+  if (!override || !override.tallerDeadline) return null;
   return {
     email: key,
     deadline: override.tallerDeadline.getTime(),
