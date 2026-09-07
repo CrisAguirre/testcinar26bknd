@@ -2,6 +2,16 @@ import Grade from '../models/Grade.js';
 import User from '../models/User.js';
 import { KNOWN_EXAM_SUBJECTS, isSubmissionAllowed } from '../config/schedule.js';
 import { nowColombia } from '../config/timezone.js';
+import { checkEnrollment } from './enrollmentController.js';
+
+function getCourseFromSubject(subject) {
+  if (!subject) return null;
+  const s = subject.toLowerCase();
+  if (s.includes('desarrollo web 1')) return 'desarrollo-web-1';
+  if (s.includes('desarrollo web 2')) return 'desarrollo-web-2';
+  if (s.includes('algoritmia') || s.includes('taller') || s.includes('algoritmos')) return 'algoritmos';
+  return null;
+}
 
 export async function getAllGrades(req, res) {
   try {
@@ -127,9 +137,23 @@ export async function submitMyGrade(req, res) {
       return res.status(400).json({ error: 'subject, score y period son obligatorios' });
     }
 
+    const user = await User.findById(req.user.id).select('email role');
+    const isPrivileged = user && ['admin', 'coordinator', 'teacher'].includes(user.role);
+
+    if (!isPrivileged) {
+      const course = getCourseFromSubject(subject);
+      if (course) {
+        const enrollment = await checkEnrollment(req.user.id, course);
+        if (!enrollment.enrolled) {
+          return res.status(403).json({ error: enrollment.reason || 'No estás inscrito en este curso' });
+        }
+        if (!enrollment.canPresent) {
+          return res.status(403).json({ error: enrollment.reason || 'No tienes permisos para presentar en este curso' });
+        }
+      }
+    }
+
     if (KNOWN_EXAM_SUBJECTS.has(subject)) {
-      const user = await User.findById(req.user.id).select('email role');
-      const isPrivileged = user && ['admin', 'coordinator', 'teacher'].includes(user.role);
       if (!isPrivileged) {
         const usedAttempts = await Grade.countDocuments({ student: req.user.id, subject });
         const decision = isSubmissionAllowed(subject, user.email, usedAttempts, submittedAt, nowColombia());

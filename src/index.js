@@ -10,6 +10,7 @@ import User from './models/User.js';
 import authRoutes from './routes/auth.js';
 import gradeRoutes from './routes/grades.js';
 import scheduleRoutes from './routes/schedule.js';
+import enrollmentRoutes from './routes/enrollments.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -77,6 +78,12 @@ app.get('/', (req, res) => {
       },
       schedule: {
         status: 'GET /api/schedule'
+      },
+      enrollments: {
+        mine: 'GET /api/enrollments/mine',
+        enroll: 'POST /api/enrollments',
+        courseEnrollments: 'GET /api/enrollments/course/:course',
+        unenroll: 'DELETE /api/enrollments/:userId/:course'
       }
     }
   });
@@ -85,6 +92,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/grades', gradeRoutes);
 app.use('/api/schedule', scheduleRoutes);
+app.use('/api/enrollments', enrollmentRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
