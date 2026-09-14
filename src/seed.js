@@ -47,41 +47,53 @@ async function seedStudents() {
 
   // Sembrar estudiantes de DW1 y registrarlos en DW2
   for (const s of dw1Students) {
-    let user = await User.findOne({ email: s.email });
-    if (!user) {
-      const hashedPassword = await bcrypt.hash(s.password, 10);
-      user = await User.create({
-        username: s.email.split('@')[0],
-        email: s.email,
-        password: hashedPassword,
-        full_name: s.full_name,
-        role: 'student'
-      });
-      console.log(`Creado DW1/2: ${s.full_name} (${s.email})`);
-    }
+    const hashedPassword = await bcrypt.hash(s.password, 10);
+    const userData = {
+      username: s.email.split('@')[0],
+      email: s.email,
+      password: hashedPassword,
+      full_name: s.full_name,
+      role: 'student'
+    };
     
-    // Inscribir en DW2
-    const enrollment = await Enrollment.findOne({ user: user._id, course: 'desarrollo-web-2' });
-    if (!enrollment) {
+    let user = await User.findOneAndUpdate(
+      { email: s.email },
+      { $set: userData },
+      { new: true, upsert: true }
+    );
+    console.log(`Upserted DW1/2: ${s.full_name} (${s.email})`);
+    
+    // Inscribir en DW2 y DW1
+    const enrollmentDw2 = await Enrollment.findOne({ user: user._id, course: 'desarrollo-web-2' });
+    if (!enrollmentDw2) {
       await Enrollment.create({ user: user._id, course: 'desarrollo-web-2', canPresent: true });
       console.log(`Inscrito en DW2: ${s.full_name}`);
+    }
+
+    const enrollmentDw1 = await Enrollment.findOne({ user: user._id, course: 'desarrollo-web-1' });
+    if (!enrollmentDw1) {
+      await Enrollment.create({ user: user._id, course: 'desarrollo-web-1', canPresent: true });
+      console.log(`Inscrito en DW1: ${s.full_name}`);
     }
   }
 
   // Sembrar estudiantes de Algoritmos y registrarlos en Algoritmos
   for (const s of algoStudents) {
-    let user = await User.findOne({ email: s.email });
-    if (!user) {
-      const hashedPassword = await bcrypt.hash(s.password, 10);
-      user = await User.create({
-        username: s.username,
-        email: s.email,
-        password: hashedPassword,
-        full_name: s.full_name,
-        role: 'student'
-      });
-      console.log(`Creado Algo: ${s.full_name} (${s.username})`);
-    }
+    const hashedPassword = await bcrypt.hash(s.password, 10);
+    const userData = {
+      username: s.username,
+      email: s.email,
+      password: hashedPassword,
+      full_name: s.full_name,
+      role: 'student'
+    };
+
+    let user = await User.findOneAndUpdate(
+      { email: s.email },
+      { $set: userData },
+      { new: true, upsert: true }
+    );
+    console.log(`Upserted Algo: ${s.full_name} (${s.username})`);
 
     // Inscribir en Algoritmos
     const enrollment = await Enrollment.findOne({ user: user._id, course: 'algoritmos' });
