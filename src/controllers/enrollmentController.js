@@ -68,19 +68,20 @@ export async function getCourseEnrollments(req, res) {
 
 export async function checkEnrollment(userId, course) {
   if (course === 'desarrollo-web-1') {
-    return { enrolled: true, canPresent: false, reason: 'Curso finalizado' };
+    return { enrolled: false, canPresent: false, reason: 'Curso finalizado, ya no está disponible.' };
   }
 
+  // Verificar si hay registro en la tabla Enrollment
+  const enrollment = await Enrollment.findOne({ user: userId, course });
+  
   if (course === 'desarrollo-web-2') {
-    const dw1Grades = await Grade.countDocuments({ student: userId });
-    if (dw1Grades === 0) {
-      return { enrolled: false, canPresent: false, reason: 'Debe estar inscrito en Desarrollo Web 1' };
+    if (!enrollment) {
+      return { enrolled: false, canPresent: false, reason: 'No está inscrito en Desarrollo Web 2. Consulte con coordinación.' };
     }
-    return { enrolled: true, canPresent: true };
+    return { enrolled: true, canPresent: enrollment.canPresent };
   }
 
   if (course === 'algoritmos') {
-    const enrollment = await Enrollment.findOne({ user: userId, course });
     if (!enrollment) {
       return { enrolled: false, canPresent: false, reason: 'No inscrito en el curso de Algoritmos' };
     }
@@ -91,4 +92,26 @@ export async function checkEnrollment(userId, course) {
   }
 
   return { enrolled: false, canPresent: false, reason: 'Curso no reconocido' };
+}
+
+export async function saveProjectIdea(req, res) {
+  try {
+    const { course, projectIdea } = req.body;
+    if (!course || projectIdea === undefined) {
+      return res.status(400).json({ error: 'Faltan parámetros requeridos' });
+    }
+
+    const enrollment = await Enrollment.findOne({ user: req.user.id, course });
+    if (!enrollment) {
+      return res.status(404).json({ error: 'Inscripción no encontrada' });
+    }
+
+    enrollment.projectIdea = projectIdea;
+    await enrollment.save();
+
+    res.json({ message: 'Idea de proyecto guardada exitosamente', projectIdea });
+  } catch (error) {
+    console.error('Error al guardar idea de proyecto:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 }

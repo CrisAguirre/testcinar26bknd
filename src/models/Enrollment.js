@@ -15,6 +15,10 @@ const enrollmentSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  projectIdea: {
+    type: String,
+    default: ''
+  },
   enrolledAt: {
     type: Date,
     default: Date.now
