@@ -29,6 +29,7 @@ const algoStudents = [
   { code: '9', full_name: 'Jeferson Hair Hernández', username: 'JHH9@LgC26', email: 'algo9@cinar.edu.co', password: '@cc3500' },
   { code: '10', full_name: 'David Felipe Narváez', username: 'DFN10@LgC26', email: 'algo10@cinar.edu.co', password: '@cc3500' },
   { code: '11', full_name: 'David Santiago Erazo Moncayo', username: 'DSEM11@LgC26', email: 'algo11@cinar.edu.co', password: '@cc3500' },
+  { code: '12', full_name: 'Brayan Buesaquillo', username: 'BB12@LgC26', email: 'algo12@cinar.edu.co', password: '@cc3500' },
 ];
 
 const coordinator = {
