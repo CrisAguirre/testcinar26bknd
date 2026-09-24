@@ -85,6 +85,12 @@ async function seedStudents() {
       await enrollmentDw1.save();
       console.log(`Desbloqueado DW1: ${s.full_name}`);
     }
+
+    // Bloquear Algoritmos: garantizar que NO tengan acceso a este curso
+    const strayAlgo = await Enrollment.deleteMany({ user: user._id, course: 'algoritmos' });
+    if (strayAlgo.deletedCount > 0) {
+      console.log(`Bloqueo Algoritmos para ${s.full_name}: eliminadas ${strayAlgo.deletedCount}`);
+    }
   }
 
   // Sembrar estudiantes de Algoritmos y registrarlos en Algoritmos
