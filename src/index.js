@@ -16,9 +16,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 async function seedAdmin() {
+  const hashedPassword = await bcrypt.hash('Janis724@#$%', 10);
   const admin = await User.findOne({ username: 'admin' });
   if (!admin) {
-    const hashedPassword = await bcrypt.hash('Janis724@', 10);
     await User.create({
       username: 'admin',
       email: 'admin@cinar.com',
@@ -26,9 +26,11 @@ async function seedAdmin() {
       full_name: 'Administrador Cinar',
       role: 'admin'
     });
-    console.log('Usuario admin creado (admin / Janis724@)');
+    console.log('Usuario admin creado (admin / Janis724@#$%)');
   } else {
-    console.log('Usuario admin ya existe');
+    admin.password = hashedPassword;
+    await admin.save();
+    console.log('Contraseña admin actualizada');
   }
 }
 
