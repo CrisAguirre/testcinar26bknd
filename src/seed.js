@@ -47,51 +47,9 @@ async function seedStudents() {
 
   const Enrollment = (await import('./models/Enrollment.js')).default;
 
-  // Sembrar estudiantes de DW1 y registrarlos en DW2
-  for (const s of dw1Students) {
-    const hashedPassword = await bcrypt.hash(s.password, 10);
-    const userData = {
-      username: s.email.split('@')[0],
-      email: s.email,
-      password: hashedPassword,
-      full_name: s.full_name,
-      role: 'student'
-    };
-    
-    let user = await User.findOneAndUpdate(
-      { email: s.email },
-      { $set: userData },
-      { new: true, upsert: true }
-    );
-    console.log(`Upserted DW1/2: ${s.full_name} (${s.email})`);
-    
-    // Inscribir en DW2 y DW1 (repara canPresent=false -> desbloqueo)
-    const enrollmentDw2 = await Enrollment.findOne({ user: user._id, course: 'desarrollo-web-2' });
-    if (!enrollmentDw2) {
-      await Enrollment.create({ user: user._id, course: 'desarrollo-web-2', canPresent: true });
-      console.log(`Inscrito en DW2: ${s.full_name}`);
-    } else if (!enrollmentDw2.canPresent) {
-      enrollmentDw2.canPresent = true;
-      await enrollmentDw2.save();
-      console.log(`Desbloqueado DW2: ${s.full_name}`);
-    }
-
-    const enrollmentDw1 = await Enrollment.findOne({ user: user._id, course: 'desarrollo-web-1' });
-    if (!enrollmentDw1) {
-      await Enrollment.create({ user: user._id, course: 'desarrollo-web-1', canPresent: true });
-      console.log(`Inscrito en DW1: ${s.full_name}`);
-    } else if (!enrollmentDw1.canPresent) {
-      enrollmentDw1.canPresent = true;
-      await enrollmentDw1.save();
-      console.log(`Desbloqueado DW1: ${s.full_name}`);
-    }
-
-    // Bloquear Algoritmos: garantizar que NO tengan acceso a este curso
-    const strayAlgo = await Enrollment.deleteMany({ user: user._id, course: 'algoritmos' });
-    if (strayAlgo.deletedCount > 0) {
-      console.log(`Bloqueo Algoritmos para ${s.full_name}: eliminadas ${strayAlgo.deletedCount}`);
-    }
-  }
+  // NO TOCAR los 7 de DW (instrucción usuario 24/09): ya están bien, se omiten.
+  const dwEmails = new Set(dw1Students.map((s) => s.email.toLowerCase()));
+  console.log('Omitiendo 7 DW por instrucción (sin cambios):', [...dwEmails].join(', '));
 
   // Sembrar estudiantes de Algoritmos y registrarlos en Algoritmos
   for (const s of algoStudents) {
@@ -126,6 +84,26 @@ async function seedStudents() {
     const stray = await Enrollment.deleteMany({ user: user._id, course: { $in: ['desarrollo-web-1', 'desarrollo-web-2'] } });
     if (stray.deletedCount > 0) {
       console.log(`Limpieza DW para ${s.full_name}: eliminadas ${stray.deletedCount}`);
+    }
+  }
+
+  // Regla general: todo student que NO sea de los 7 DW -> solo Algoritmos
+  // (no toca admin/coordinator/teacher ni a los 7 DW)
+  const otherStudents = await User.find({ role: 'student' });
+  for (const u of otherStudents) {
+    if (dwEmails.has((u.email || '').toLowerCase())) continue;
+    let algoEnr = await Enrollment.findOne({ user: u._id, course: 'algoritmos' });
+    if (!algoEnr) {
+      await Enrollment.create({ user: u._id, course: 'algoritmos', canPresent: true });
+      console.log(`Inscrito en Algoritmos (general): ${u.full_name} (${u.email})`);
+    } else if (!algoEnr.canPresent) {
+      algoEnr.canPresent = true;
+      await algoEnr.save();
+      console.log(`Desbloqueado Algoritmos (general): ${u.full_name} (${u.email})`);
+    }
+    const cleaned = await Enrollment.deleteMany({ user: u._id, course: { $in: ['desarrollo-web-1', 'desarrollo-web-2'] } });
+    if (cleaned.deletedCount > 0) {
+      console.log(`Limpieza DW (general) para ${u.full_name}: eliminadas ${cleaned.deletedCount}`);
     }
   }
 
