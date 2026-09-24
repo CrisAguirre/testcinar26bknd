@@ -30,6 +30,7 @@ const algoStudents = [
   { code: '10', full_name: 'David Felipe Narváez', username: 'DFN10@LgC26', email: 'algo10@cinar.edu.co', password: '@cc3500' },
   { code: '11', full_name: 'David Santiago Erazo Moncayo', username: 'DSEM11@LgC26', email: 'algo11@cinar.edu.co', password: '@cc3500' },
   { code: '12', full_name: 'Brayan Buesaquillo', username: 'BB12@LgC26', email: 'algo12@cinar.edu.co', password: '@cc3500' },
+  { code: '13', full_name: 'Julián David Reina Cabrera', username: 'JDRC13@LgC26', email: 'jd.reina@cinar.edu.co', password: '@cc3500' },
 ];
 
 const coordinator = {
@@ -64,17 +65,25 @@ async function seedStudents() {
     );
     console.log(`Upserted DW1/2: ${s.full_name} (${s.email})`);
     
-    // Inscribir en DW2 y DW1
+    // Inscribir en DW2 y DW1 (repara canPresent=false -> desbloqueo)
     const enrollmentDw2 = await Enrollment.findOne({ user: user._id, course: 'desarrollo-web-2' });
     if (!enrollmentDw2) {
       await Enrollment.create({ user: user._id, course: 'desarrollo-web-2', canPresent: true });
       console.log(`Inscrito en DW2: ${s.full_name}`);
+    } else if (!enrollmentDw2.canPresent) {
+      enrollmentDw2.canPresent = true;
+      await enrollmentDw2.save();
+      console.log(`Desbloqueado DW2: ${s.full_name}`);
     }
 
     const enrollmentDw1 = await Enrollment.findOne({ user: user._id, course: 'desarrollo-web-1' });
     if (!enrollmentDw1) {
       await Enrollment.create({ user: user._id, course: 'desarrollo-web-1', canPresent: true });
       console.log(`Inscrito en DW1: ${s.full_name}`);
+    } else if (!enrollmentDw1.canPresent) {
+      enrollmentDw1.canPresent = true;
+      await enrollmentDw1.save();
+      console.log(`Desbloqueado DW1: ${s.full_name}`);
     }
   }
 
@@ -96,11 +105,21 @@ async function seedStudents() {
     );
     console.log(`Upserted Algo: ${s.full_name} (${s.username})`);
 
-    // Inscribir en Algoritmos
+    // Inscribir en Algoritmos (únicamente este curso) y reparar canPresent
     const enrollment = await Enrollment.findOne({ user: user._id, course: 'algoritmos' });
     if (!enrollment) {
       await Enrollment.create({ user: user._id, course: 'algoritmos', canPresent: true });
       console.log(`Inscrito en Algoritmos: ${s.full_name}`);
+    } else if (!enrollment.canPresent) {
+      enrollment.canPresent = true;
+      await enrollment.save();
+      console.log(`Desbloqueado Algoritmos: ${s.full_name}`);
+    }
+
+    // Garantizar exclusividad: eliminar DW1/DW2 si existieran para alumnos de algoritmos
+    const stray = await Enrollment.deleteMany({ user: user._id, course: { $in: ['desarrollo-web-1', 'desarrollo-web-2'] } });
+    if (stray.deletedCount > 0) {
+      console.log(`Limpieza DW para ${s.full_name}: eliminadas ${stray.deletedCount}`);
     }
   }
 
