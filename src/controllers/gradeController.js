@@ -13,6 +13,21 @@ function getCourseFromSubject(subject) {
   return null;
 }
 
+function isExamSubject(subject) {
+  if (!subject || typeof subject !== 'string') return false;
+  return KNOWN_EXAM_SUBJECTS.has(subject) || getCourseFromSubject(subject) !== null;
+}
+
+// P2: espejo en servidor del bloqueo temporal de parciales/talleres.
+// El redirect del frontend se salta con llamadas directas a la API;
+// aquí se bloquea de verdad. Solo personal privilegiado.
+// Se desactiva con EXAMS_LOCKED=false.
+function examLockError(user) {
+  if (process.env.EXAMS_LOCKED === 'false') return null;
+  if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
+  return 'Exámenes bloqueados temporalmente: todavía no son las fechas';
+}
+
 export async function getAllGrades(req, res) {
   try {
     const { student, subject, period } = req.query;
@@ -146,6 +161,13 @@ export async function submitMyGrade(req, res) {
     const user = await User.findById(req.user.id).select('email role');
     const isPrivileged = user && ['admin', 'coordinator', 'teacher'].includes(user.role);
 
+    if (!isPrivileged && isExamSubject(subject)) {
+      const lockReason = examLockError(user);
+      if (lockReason) {
+        return res.status(403).json({ error: lockReason });
+      }
+    }
+
     if (!isPrivileged) {
       const course = getCourseFromSubject(subject);
       if (course) {
@@ -198,6 +220,13 @@ export async function updateMyGrade(req, res) {
 
     if (grade.student.toString() !== req.user.id) {
       return res.status(403).json({ error: 'No puedes modificar una calificación que no te pertenece' });
+    }
+
+    if (isExamSubject(grade.subject)) {
+      const lockReason = examLockError({ role: req.user.role });
+      if (lockReason) {
+        return res.status(403).json({ error: lockReason });
+      }
     }
 
     const { examData } = req.body;

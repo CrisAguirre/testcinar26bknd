@@ -12,6 +12,44 @@ function getJwtSecret() {
 
 const JWT_SECRET = getJwtSecret();
 
+export function getAllowedOrigins() {
+  return (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+}
+
+export function isOriginAllowed(origin) {
+  if (!origin) return false;
+  return getAllowedOrigins().includes(origin);
+}
+
+// P2: los endpoints autenticados por cookie (refresh/logout) exigen
+// Origin o Referer de la lista permitida. Los navegadores siempre envían
+// uno de los dos en peticiones cross-site con credenciales, así un sitio
+// atacante no puede rotar ni cerrar sesiones ajenas (CSRF).
+// En desarrollo sin allowlist se permite (solo local).
+export function requireAllowedOrigin(req, res, next) {
+  const allowlist = getAllowedOrigins();
+  if (allowlist.length === 0 && process.env.NODE_ENV !== 'production') {
+    return next();
+  }
+  const origin = req.headers.origin || req.headers.referer;
+  if (!origin) {
+    return res.status(403).json({ error: 'Origen no permitido' });
+  }
+  let allowed;
+  try {
+    allowed = allowlist.includes(new URL(origin).origin);
+  } catch {
+    allowed = false;
+  }
+  if (!allowed) {
+    return res.status(403).json({ error: 'Origen no permitido' });
+  }
+  next();
+}
+
 export function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];

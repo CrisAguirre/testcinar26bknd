@@ -9,6 +9,7 @@ config();
 
 import { connectDB } from './config/database.js';
 import User from './models/User.js';
+import { getAllowedOrigins } from './middlewares/authMiddleware.js';
 import authRoutes from './routes/auth.js';
 import gradeRoutes from './routes/grades.js';
 import scheduleRoutes from './routes/schedule.js';
@@ -47,10 +48,9 @@ async function seedAdmin() {
 }
 
 // P1: CORS restringido a los frontends conocidos.
-const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '')
-  .split(',')
-  .map((o) => o.trim())
-  .filter(Boolean);
+// P2: credentials:true para la cookie httpOnly de refresh (los
+// navegadores exigen orígenes explícitos, nunca '*', con credenciales).
+const allowedOrigins = getAllowedOrigins();
 app.use(
   cors({
     origin: (origin, cb) => {
@@ -62,7 +62,8 @@ app.use(
       return allowedOrigins.includes(origin)
         ? cb(null, true)
         : cb(new Error('Origen no permitido por CORS'));
-    }
+    },
+    credentials: true
   })
 );
 app.use(helmet());
@@ -86,6 +87,12 @@ const apiLimiter = rateLimit({
 app.use('/api/auth/login', loginLimiter);
 app.use('/api/auth/register', loginLimiter);
 app.use('/api/', apiLimiter);
+
+// P2: las respuestas con datos personales no deben quedar en cachés.
+app.use(['/api/grades', '/api/enrollments', '/api/auth/profile'], (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -117,6 +124,8 @@ app.get('/', (req, res) => {
       auth: {
         register: 'POST /api/auth/register',
         login: 'POST /api/auth/login',
+        refresh: 'POST /api/auth/refresh',
+        logout: 'POST /api/auth/logout',
         profile: 'GET /api/auth/profile',
         createUser: 'POST /api/auth/users (admin)',
         deleteUser: 'DELETE /api/auth/users/:id (admin)'
@@ -158,6 +167,10 @@ app.use((err, req, res, next) => {
 
 await connectDB();
 await seedAdmin();
+
+if (process.env.EXAMS_LOCKED !== 'false') {
+  console.log('Bloqueo de exámenes: ACTIVO (solo privilegiados pueden enviar calificaciones de exámenes)');
+}
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

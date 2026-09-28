@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
@@ -40,12 +41,67 @@ function validateCredentials({ username, email, password, full_name }) {
   return null;
 }
 
-function generateToken(user) {
+function generateAccessToken(user) {
   return jwt.sign(
     { id: user._id, username: user.username, role: user.role },
     JWT_SECRET,
-    { expiresIn: '24h' }
+    { expiresIn: '15m' }
   );
+}
+
+// P2: refresh token opaco y rotativo. En el cliente vive solo en cookie
+// httpOnly; aquí solo se guarda su hash SHA-256 + expiración (7 días).
+const REFRESH_TTL_MS = 7 * 24 * 3600 * 1000;
+
+function hashRefreshToken(token) {
+  return crypto.createHash('sha256').update(token, 'utf8').digest('hex');
+}
+
+function parseRefreshCookie(req) {
+  const header = req.headers?.cookie;
+  if (typeof header !== 'string') return null;
+  for (const part of header.split(';')) {
+    const idx = part.indexOf('=');
+    if (idx === -1) continue;
+    if (part.slice(0, idx).trim() === 'cinar_refresh') {
+      const val = part.slice(idx + 1).trim();
+      return val ? decodeURIComponent(val) : null;
+    }
+  }
+  return null;
+}
+
+function refreshCookieOptions() {
+  const isProd = process.env.NODE_ENV === 'production';
+  return {
+    httpOnly: true,
+    secure: isProd, // Render/Vercel usan HTTPS; en local HTTP no acepta Secure
+    sameSite: isProd ? 'none' : 'lax',
+    path: '/api/auth',
+    maxAge: REFRESH_TTL_MS
+  };
+}
+
+async function issueSession(res, user) {
+  const accessToken = generateAccessToken(user);
+  const refreshToken = `${user._id}.${crypto.randomBytes(48).toString('hex')}`;
+  const expiresAt = new Date(Date.now() + REFRESH_TTL_MS);
+  await User.findByIdAndUpdate(user._id, {
+    refreshTokenHash: hashRefreshToken(refreshToken),
+    refreshTokenExpiresAt: expiresAt
+  });
+  res.cookie('cinar_refresh', refreshToken, refreshCookieOptions());
+  return accessToken;
+}
+
+async function clearSession(userId, res) {
+  if (userId) {
+    await User.findByIdAndUpdate(userId, {
+      refreshTokenHash: null,
+      refreshTokenExpiresAt: null
+    }).catch(() => {});
+  }
+  res.clearCookie('cinar_refresh', { ...refreshCookieOptions(), maxAge: undefined });
 }
 
 export async function register(req, res) {
@@ -76,7 +132,7 @@ export async function register(req, res) {
       role: 'student'
     });
 
-    const token = generateToken(user);
+    const token = await issueSession(res, user);
 
     res.status(201).json({
       message: 'Usuario registrado exitosamente',
@@ -117,7 +173,7 @@ export async function login(req, res) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    const token = generateToken(user);
+    const token = await issueSession(res, user);
 
     res.json({
       message: 'Inicio de sesión exitoso',
@@ -132,6 +188,52 @@ export async function login(req, res) {
     });
   } catch (error) {
     console.error('Error en login:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function refreshSession(req, res) {
+  try {
+    const presented = parseRefreshCookie(req);
+    if (!presented || !presented.includes('.')) {
+      return res.status(401).json({ error: 'Sesión expirada, inicia sesión de nuevo' });
+    }
+    const userId = presented.split('.')[0];
+    const user = await User.findById(userId).select('+refreshTokenHash +refreshTokenExpiresAt');
+    if (
+      !user ||
+      !user.refreshTokenHash ||
+      !user.refreshTokenExpiresAt ||
+      user.refreshTokenExpiresAt.getTime() < Date.now() ||
+      user.refreshTokenHash !== hashRefreshToken(presented)
+    ) {
+      if (user) {
+        await clearSession(user._id, res);
+      } else {
+        res.clearCookie('cinar_refresh', { ...refreshCookieOptions(), maxAge: undefined });
+      }
+      return res.status(401).json({ error: 'Sesión expirada, inicia sesión de nuevo' });
+    }
+    // Rotación: cada uso emite un refresh nuevo e invalida el anterior.
+    const token = await issueSession(res, user);
+    res.json({ token });
+  } catch (error) {
+    console.error('Error al refrescar sesión:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function logoutSession(req, res) {
+  try {
+    const presented = parseRefreshCookie(req);
+    if (presented && presented.includes('.')) {
+      await clearSession(presented.split('.')[0], res);
+    } else {
+      res.clearCookie('cinar_refresh', { ...refreshCookieOptions(), maxAge: undefined });
+    }
+    res.json({ message: 'Sesión cerrada' });
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 }

@@ -27,6 +27,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['student', 'teacher', 'admin', 'coordinator'],
     default: 'student'
+  },
+  // P2: refresh token rotativo (solo hash + expiración, nunca el token plano).
+  refreshTokenHash: {
+    type: String,
+    default: null,
+    select: false
+  },
+  refreshTokenExpiresAt: {
+    type: Date,
+    default: null,
+    select: false
   }
 }, {
   timestamps: {
