@@ -50,22 +50,27 @@ async function seedAdmin() {
 // P1: CORS restringido a los frontends conocidos.
 // P2: credentials:true para la cookie httpOnly de refresh (los
 // navegadores exigen orígenes explícitos, nunca '*', con credenciales).
-const allowedOrigins = getAllowedOrigins();
+// Un origen no permitido se deniega sin cabeceras CORS (el navegador lo
+// bloquea en limpio) en vez de responder 500.
+const allowedOrigins = getAllowedOrigins().map((o) => o.replace(/\/+$/, ''));
 app.use(
   cors({
     origin: (origin, cb) => {
       if (!origin) return cb(null, true); // llamadas server-to-server / curl
       if (allowedOrigins.length === 0) {
         if (!isProd) return cb(null, true);
-        return cb(new Error('Origen no permitido por CORS'));
+        return cb(null, false);
       }
-      return allowedOrigins.includes(origin)
+      return allowedOrigins.includes(origin.replace(/\/+$/, ''))
         ? cb(null, true)
-        : cb(new Error('Origen no permitido por CORS'));
+        : cb(null, false);
     },
     credentials: true
   })
 );
+if (isProd && allowedOrigins.length === 0) {
+  console.warn('AVISO: FRONTEND_URLS vacío en producción, ningún navegador podrá llamar la API');
+}
 app.use(helmet());
 app.use(express.json({ limit: '100kb' }));
 

@@ -15,7 +15,7 @@ const JWT_SECRET = getJwtSecret();
 export function getAllowedOrigins() {
   return (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '')
     .split(',')
-    .map((o) => o.trim())
+    .map((o) => o.trim().replace(/\/+$/, ''))
     .filter(Boolean);
 }
 
