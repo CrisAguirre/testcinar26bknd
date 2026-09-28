@@ -20,23 +20,27 @@ const PORT = process.env.PORT || 3000;
 const isProd = process.env.NODE_ENV === 'production';
 
 async function seedAdmin() {
-  // P0: la contraseña inicial sale de ADMIN_PASSWORD (nunca del código).
-  // Solo crea el admin si no existe; jamás resetea una contraseña existente.
-  const existing = await User.findOne({ $or: [{ username: 'admin' }, { email: 'admin@cinar.com' }] });
-  if (existing) {
-    console.log('Usuario admin ya existe, no se modifica');
-    return;
-  }
+  // La contraseña del admin sale de ADMIN_PASSWORD (nunca del código).
+  // Si la variable está definida, crea el admin o actualiza su contraseña
+  // con ese valor: cambiar la variable + redesplegar = nueva contraseña.
   const initialPassword = process.env.ADMIN_PASSWORD;
   if (!initialPassword || initialPassword.length < 12) {
     if (isProd) {
       console.error('FATAL: ADMIN_PASSWORD no configurado (mínimo 12 caracteres). El servidor no arrancará.');
       process.exit(1);
     }
-    console.warn('ADMIN_PASSWORD no configurado: se omite la creación del admin en desarrollo');
+    console.warn('ADMIN_PASSWORD no configurado: se omite la sincronización del admin en desarrollo');
     return;
   }
   const hashedPassword = await bcrypt.hash(initialPassword, 12);
+  const existing = await User.findOne({ $or: [{ username: 'admin' }, { email: 'admin@cinar.com' }] });
+  if (existing) {
+    existing.password = hashedPassword;
+    if (existing.role !== 'admin') existing.role = 'admin';
+    await existing.save();
+    console.log('Contraseña admin sincronizada desde entorno');
+    return;
+  }
   await User.create({
     username: 'admin',
     email: 'admin@cinar.com',
@@ -44,7 +48,7 @@ async function seedAdmin() {
     full_name: 'Administrador Cinar',
     role: 'admin'
   });
-  console.log('Usuario admin creado (cambia su contraseña tras el primer ingreso)');
+  console.log('Usuario admin creado desde entorno');
 }
 
 // P1: CORS restringido a los frontends conocidos.
