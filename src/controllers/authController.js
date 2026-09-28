@@ -253,6 +253,105 @@ export async function getProfile(req, res) {
 
 export async function createUserByAdmin(req, res) {
   try {
+    const { username, email, password, full_name, role } = req.body ?? {};
+
+    const validationError = validateCredentials({ username, email, password, full_name });
+    if (validationError) {
+      return res.status(400).json({ error: validationError });
+    }
+    if (!ALLOWED_ROLES.includes(role)) {
+      return res.status(400).json({ error: `Rol inválido. Permitidos: ${ALLOWED_ROLES.join(', ')}` });
+    }
+
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+    const existing = await User.findOne({ $or: [{ username: cleanUsername }, { email: cleanEmail }] });
+    if (existing) {
+      return res.status(409).json({ error: 'El usuario o email ya existe' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = await User.create({
+      username: cleanUsername,
+      email: cleanEmail,
+      password: hashedPassword,
+      full_name: full_name.trim(),
+      role
+    });
+
+    res.status(201).json({
+      message: 'Usuario creado exitosamente',
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        full_name: user.full_name,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('Error al crear usuario:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function changeMyPassword(req, res) {
+  try {
+    const { currentPassword, newPassword } = req.body ?? {};
+    if (!isNonEmptyString(currentPassword) || !isNonEmptyString(newPassword)) {
+      return res.status(400).json({ error: 'Contraseña actual y nueva son obligatorias' });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: 'La nueva contraseña debe tener mínimo 8 caracteres' });
+    }
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    const ok = await bcrypt.compare(currentPassword, user.password);
+    if (!ok) {
+      return res.status(401).json({ error: 'Contraseña actual incorrecta' });
+    }
+    user.password = await bcrypt.hash(newPassword, 12);
+    // Revoca las demás sesiones (el access actual caduca en 15 min máximo).
+    user.refreshTokenHash = null;
+    user.refreshTokenExpiresAt = null;
+    await user.save();
+    res.json({ message: 'Contraseña actualizada, vuelve a iniciar sesión' });
+  } catch (error) {
+    console.error('Error al cambiar contraseña:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function adminResetPassword(req, res) {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body ?? {};
+    if (req.user.id === id) {
+      return res.status(400).json({ error: 'Para tu propia cuenta usa PATCH /api/auth/password' });
+    }
+    if (!isNonEmptyString(newPassword) || newPassword.length < 8) {
+      return res.status(400).json({ error: 'La nueva contraseña debe tener mínimo 8 caracteres' });
+    }
+    const target = await User.findById(id);
+    if (!target) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    target.password = await bcrypt.hash(newPassword, 12);
+    target.refreshTokenHash = null;
+    target.refreshTokenExpiresAt = null;
+    await target.save();
+    res.json({ message: `Contraseña de ${target.username} actualizada` });
+  } catch (error) {
+    console.error('Error al restablecer contraseña:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function deleteUser(req, res) {
+  try {
     const { id } = req.params;
 
     if (req.user.id === id) {

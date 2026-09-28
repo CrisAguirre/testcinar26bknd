@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import { register, login, getProfile, deleteUser, createUserByAdmin, refreshSession, logoutSession } from '../controllers/authController.js';
+import { register, login, getProfile, deleteUser, createUserByAdmin, refreshSession, logoutSession, changeMyPassword, adminResetPassword } from '../controllers/authController.js';
 import { authenticateToken, requireRole, requireAllowedOrigin } from '../middlewares/authMiddleware.js';
 
 const router = Router();
@@ -18,6 +18,8 @@ router.post('/register', register);
 router.post('/login', login);
 router.post('/refresh', refreshLimiter, requireAllowedOrigin, refreshSession);
 router.post('/logout', requireAllowedOrigin, logoutSession);
+router.patch('/password', authenticateToken, changeMyPassword);
+router.patch('/users/:id/password', authenticateToken, requireRole('admin'), adminResetPassword);
 router.get('/profile', authenticateToken, getProfile);
 router.post('/users', authenticateToken, requireRole('admin'), createUserByAdmin);
 router.delete('/users/:id', authenticateToken, requireRole('admin'), deleteUser);

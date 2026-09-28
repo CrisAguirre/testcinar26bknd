@@ -69,7 +69,7 @@ app.use(
   })
 );
 if (isProd && allowedOrigins.length === 0) {
-  console.warn('AVISO: FRONTEND_URLS vacío en producción, ningún navegador podrá llamar la API');
+  console.warn('AVISO: FRONTEND_URL(S) vacío en producción, ningún navegador podrá llamar la API');
 }
 app.use(helmet());
 app.use(express.json({ limit: '100kb' }));
