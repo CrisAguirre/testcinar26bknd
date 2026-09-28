@@ -1,6 +1,8 @@
 import './config/timezone.js';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcryptjs';
 import { config } from 'dotenv';
 config();
@@ -14,28 +16,76 @@ import enrollmentRoutes from './routes/enrollments.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProd = process.env.NODE_ENV === 'production';
 
 async function seedAdmin() {
-  const hashedPassword = await bcrypt.hash('Janis724@#$%', 10);
-  const admin = await User.findOne({ username: 'admin' });
-  if (!admin) {
-    await User.create({
-      username: 'admin',
-      email: 'admin@cinar.com',
-      password: hashedPassword,
-      full_name: 'Administrador Cinar',
-      role: 'admin'
-    });
-    console.log('Usuario admin creado (admin / Janis724@#$%)');
-  } else {
-    admin.password = hashedPassword;
-    await admin.save();
-    console.log('Contraseña admin actualizada');
+  // P0: la contraseña inicial sale de ADMIN_PASSWORD (nunca del código).
+  // Solo crea el admin si no existe; jamás resetea una contraseña existente.
+  const existing = await User.findOne({ $or: [{ username: 'admin' }, { email: 'admin@cinar.com' }] });
+  if (existing) {
+    console.log('Usuario admin ya existe, no se modifica');
+    return;
   }
+  const initialPassword = process.env.ADMIN_PASSWORD;
+  if (!initialPassword || initialPassword.length < 12) {
+    if (isProd) {
+      console.error('FATAL: ADMIN_PASSWORD no configurado (mínimo 12 caracteres). El servidor no arrancará.');
+      process.exit(1);
+    }
+    console.warn('ADMIN_PASSWORD no configurado: se omite la creación del admin en desarrollo');
+    return;
+  }
+  const hashedPassword = await bcrypt.hash(initialPassword, 12);
+  await User.create({
+    username: 'admin',
+    email: 'admin@cinar.com',
+    password: hashedPassword,
+    full_name: 'Administrador Cinar',
+    role: 'admin'
+  });
+  console.log('Usuario admin creado (cambia su contraseña tras el primer ingreso)');
 }
 
-app.use(cors());
-app.use(express.json());
+// P1: CORS restringido a los frontends conocidos.
+const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true); // llamadas server-to-server / curl
+      if (allowedOrigins.length === 0) {
+        if (!isProd) return cb(null, true);
+        return cb(new Error('Origen no permitido por CORS'));
+      }
+      return allowedOrigins.includes(origin)
+        ? cb(null, true)
+        : cb(new Error('Origen no permitido por CORS'));
+    }
+  })
+);
+app.use(helmet());
+app.use(express.json({ limit: '100kb' }));
+
+// P1: rate limiting anti fuerza-bruta y abuso.
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Demasiados intentos, intenta de nuevo en 15 minutos' }
+});
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Demasiadas peticiones, intenta más tarde' }
+});
+app.use('/api/auth/login', loginLimiter);
+app.use('/api/auth/register', loginLimiter);
+app.use('/api/', apiLimiter);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -68,7 +118,8 @@ app.get('/', (req, res) => {
         register: 'POST /api/auth/register',
         login: 'POST /api/auth/login',
         profile: 'GET /api/auth/profile',
-        deleteUser: 'DELETE /api/auth/users/:id'
+        createUser: 'POST /api/auth/users (admin)',
+        deleteUser: 'DELETE /api/auth/users/:id (admin)'
       },
       grades: {
         list: 'GET /api/grades',

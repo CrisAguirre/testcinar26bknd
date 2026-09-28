@@ -41,6 +41,12 @@ export async function getGradeById(req, res) {
     if (!grade) {
       return res.status(404).json({ error: 'Calificación no encontrada' });
     }
+    // P1: un estudiante solo puede ver sus propias notas; personal
+    // privilegiado (admin/teacher/coordinator) puede ver cualquiera.
+    const privileged = req.user && ['admin', 'teacher', 'coordinator'].includes(req.user.role);
+    if (!privileged && String(grade.student?._id ?? grade.student) !== String(req.user.id)) {
+      return res.status(403).json({ error: 'No tienes permisos para ver esta calificación' });
+    }
     res.json(grade);
   } catch (error) {
     console.error('Error al obtener calificación:', error);

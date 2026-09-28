@@ -2,7 +2,43 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || (() => { console.warn('⚠ JWT_SECRET no configurado, usando fallback inseguro'); return 'dev-insecure-fallback'; })();
+const JWT_SECRET = getJwtSecret();
+
+function getJwtSecret() {
+  if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
+  if (process.env.NODE_ENV === 'production') {
+    console.error('FATAL: JWT_SECRET no configurado en producción. El servidor no arrancará.');
+    process.exit(1);
+  }
+  console.warn('JWT_SECRET no configurado, usando fallback solo para desarrollo local');
+  return 'dev-insecure-fallback';
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALLOWED_ROLES = ['student', 'teacher', 'coordinator', 'admin'];
+
+function isNonEmptyString(v) {
+  return typeof v === 'string' && v.trim().length > 0;
+}
+
+function validateCredentials({ username, email, password, full_name }) {
+  if (![username, email, password, full_name].every(isNonEmptyString)) {
+    return 'Todos los campos son obligatorios';
+  }
+  if (!EMAIL_RE.test(email.trim())) {
+    return 'Email inválido';
+  }
+  if (username.trim().length < 3 || username.trim().length > 40) {
+    return 'El usuario debe tener entre 3 y 40 caracteres';
+  }
+  if (password.length < 8) {
+    return 'La contraseña debe tener mínimo 8 caracteres';
+  }
+  if (full_name.trim().length > 120) {
+    return 'El nombre es demasiado largo';
+  }
+  return null;
+}
 
 function generateToken(user) {
   return jwt.sign(
@@ -14,24 +50,30 @@ function generateToken(user) {
 
 export async function register(req, res) {
   try {
-    const { username, email, password, full_name, role } = req.body;
+    const { username, email, password, full_name } = req.body ?? {};
+    // P0: el registro público SIEMPRE crea estudiantes. El campo `role`
+    // del body se ignora para evitar escalación de privilegios.
 
-    if (!username || !email || !password || !full_name) {
-      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    const validationError = validateCredentials({ username, email, password, full_name });
+    if (validationError) {
+      return res.status(400).json({ error: validationError });
     }
 
-    const existing = await User.findOne({ $or: [{ username }, { email }] });
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+    const existing = await User.findOne({ $or: [{ username: cleanUsername }, { email: cleanEmail }] });
     if (existing) {
       return res.status(409).json({ error: 'El usuario o email ya existe' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
     const user = await User.create({
-      username,
-      email,
+      username: cleanUsername,
+      email: cleanEmail,
       password: hashedPassword,
-      full_name,
-      role: role || 'student'
+      full_name: full_name.trim(),
+      role: 'student'
     });
 
     const token = generateToken(user);
@@ -55,14 +97,15 @@ export async function register(req, res) {
 
 export async function login(req, res) {
   try {
-    const { username, password } = req.body;
+    const { username, password } = req.body ?? {};
 
-    if (!username || !password) {
+    if (!isNonEmptyString(username) || !isNonEmptyString(password)) {
       return res.status(400).json({ error: 'Usuario y contraseña son obligatorios' });
     }
 
+    const cleanUsername = username.trim();
     const user = await User.findOne({
-      $or: [{ username }, { email: username }]
+      $or: [{ username: cleanUsername }, { email: cleanUsername.toLowerCase() }]
     });
 
     if (!user) {
@@ -102,6 +145,51 @@ export async function getProfile(req, res) {
     res.json(user);
   } catch (error) {
     console.error('Error al obtener perfil:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function createUserByAdmin(req, res) {
+  try {
+    const { username, email, password, full_name, role } = req.body ?? {};
+
+    const validationError = validateCredentials({ username, email, password, full_name });
+    if (validationError) {
+      return res.status(400).json({ error: validationError });
+    }
+    if (!ALLOWED_ROLES.includes(role)) {
+      return res.status(400).json({ error: `Rol inválido. Permitidos: ${ALLOWED_ROLES.join(', ')}` });
+    }
+
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+    const existing = await User.findOne({ $or: [{ username: cleanUsername }, { email: cleanEmail }] });
+    if (existing) {
+      return res.status(409).json({ error: 'El usuario o email ya existe' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = await User.create({
+      username: cleanUsername,
+      email: cleanEmail,
+      password: hashedPassword,
+      full_name: full_name.trim(),
+      role
+    });
+
+    res.status(201).json({
+      message: 'Usuario creado exitosamente',
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        full_name: user.full_name,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('Error al crear usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 }

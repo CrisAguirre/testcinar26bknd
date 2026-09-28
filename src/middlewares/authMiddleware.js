@@ -1,6 +1,16 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || (() => { console.warn('⚠ JWT_SECRET no configurado, usando fallback inseguro'); return 'dev-insecure-fallback'; })();
+function getJwtSecret() {
+  if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
+  if (process.env.NODE_ENV === 'production') {
+    console.error('FATAL: JWT_SECRET no configurado en producción. El servidor no arrancará.');
+    process.exit(1);
+  }
+  console.warn('JWT_SECRET no configurado, usando fallback solo para desarrollo local');
+  return 'dev-insecure-fallback';
+}
+
+const JWT_SECRET = getJwtSecret();
 
 export function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
