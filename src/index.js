@@ -79,16 +79,17 @@ app.use(helmet());
 app.use(express.json({ limit: '100kb' }));
 
 // P1: rate limiting anti fuerza-bruta y abuso.
+// Límites pensados para redes escolares (varios estudiantes tras una misma IP).
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 60,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { error: 'Demasiados intentos, intenta de nuevo en 15 minutos' }
 });
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 300,
+  max: 600,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { error: 'Demasiadas peticiones, intenta más tarde' }
