@@ -246,12 +246,15 @@ export async function createAttendance(req, res) {
     // Si no vienen entries, pre-cargar inscritos del curso
     if (!data.entries || data.entries.length === 0) {
       const enrollments = await Enrollment.find({ course: data.course, canPresent: true }).populate('user', '_id');
-      data.entries = enrollments.map(e => ({ student: e.user._id, status: 'P' }));
+      data.entries = enrollments.map(e => ({ 
+        student: e.user._id, 
+        statuses: ['', '', '', '', '', '', '', '', '', '', '', ''] 
+      }));
     }
     const doc = await AttendanceRecord.create(data);
     res.status(201).json(doc);
   } catch (err) {
-    if (err.code === 11000) return res.status(409).json({ error: 'Ya existe un registro de asistencia para esta fecha y curso' });
+    if (err.code === 11000) return res.status(409).json({ error: 'Ya existe una planilla de asistencia para este curso y período' });
     res.status(400).json({ error: err.message });
   }
 }
