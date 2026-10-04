@@ -14,6 +14,7 @@ import authRoutes from './routes/auth.js';
 import gradeRoutes from './routes/grades.js';
 import scheduleRoutes from './routes/schedule.js';
 import enrollmentRoutes from './routes/enrollments.js';
+import adminRoutes from './routes/admin.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -96,10 +97,19 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/auth/login', loginLimiter);
 app.use('/api/auth/register', loginLimiter);
+// Rate limit específico para admin: 300 req / 15 min (más relajado que auth, más estricto que API general)
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Demasiadas peticiones a la sección administrativa, intenta más tarde' }
+});
+app.use('/api/admin', adminLimiter);
 app.use('/api/', apiLimiter);
 
 // P2: las respuestas con datos personales no deben quedar en cachés.
-app.use(['/api/grades', '/api/enrollments', '/api/auth/profile'], (req, res, next) => {
+app.use(['/api/grades', '/api/enrollments', '/api/auth/profile', '/api/admin'], (req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');
   next();
 });
@@ -165,6 +175,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/grades', gradeRoutes);
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
