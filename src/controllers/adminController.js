@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import CourseContent from '../models/CourseContent.js';
 import TeacherAvailability from '../models/TeacherAvailability.js';
 import ClassPlan from '../models/ClassPlan.js';
