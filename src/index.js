@@ -15,6 +15,7 @@ import gradeRoutes from './routes/grades.js';
 import scheduleRoutes from './routes/schedule.js';
 import enrollmentRoutes from './routes/enrollments.js';
 import adminRoutes from './routes/admin.js';
+import dfdRoutes from './routes/dfd.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -176,6 +177,7 @@ app.use('/api/grades', gradeRoutes);
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/dfd', dfdRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
