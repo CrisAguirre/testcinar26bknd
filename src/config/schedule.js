@@ -13,7 +13,7 @@ export const KNOWN_EXAM_SUBJECTS = new Set(Object.values(EXAM_SUBJECTS));
 export const TALLER_ALGO_SUBJECT = 'Algoritmos - Taller 1';
 export const TALLER_ALGO_OPEN = new Date('2026-10-06T14:00:00-05:00');
 export const TALLER_ALGO_CLOSE = new Date('2026-10-07T23:59:59-05:00');
-export const TALLER_ALGO_MAX_ATTEMPTS = 3;
+export const TALLER_ALGO_MAX_ATTEMPTS = 2;
 
 export function isTallerAlgoOpen(checkDate = nowColombia()) {
   const ms = checkDate instanceof Date ? checkDate.getTime() : checkDate;
