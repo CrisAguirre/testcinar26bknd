@@ -8,6 +8,18 @@ export const EXAM_SUBJECTS = {
 
 export const KNOWN_EXAM_SUBJECTS = new Set(Object.values(EXAM_SUBJECTS));
 
+// Taller 1 Algoritmos: 06/10 14:00 hasta 07/10 23:59:59 hora Colombia (incluye horario extra).
+// Se valida contra submittedAt para no perder intentos hechos en ventana pero sincronizados después.
+export const TALLER_ALGO_SUBJECT = 'Algoritmos - Taller 1';
+export const TALLER_ALGO_OPEN = new Date('2026-10-06T14:00:00-05:00');
+export const TALLER_ALGO_CLOSE = new Date('2026-10-07T23:59:59-05:00');
+export const TALLER_ALGO_MAX_ATTEMPTS = 3;
+
+export function isTallerAlgoOpen(checkDate = nowColombia()) {
+  const ms = checkDate instanceof Date ? checkDate.getTime() : checkDate;
+  return ms >= TALLER_ALGO_OPEN.getTime() && ms <= TALLER_ALGO_CLOSE.getTime();
+}
+
 // Parcial 2 — Desarrollo Web 1
 // 3 simulacros + 1 evaluación.
 // Simulacros: desde el 15 de agosto hasta el inicio de la evaluación (19 ago 18:45).
@@ -118,6 +130,17 @@ export function getTallerOverride(email) {
 
 export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedAtMs, now = nowColombia()) {
   const nowMs = now.getTime();
+
+  if (subject === TALLER_ALGO_SUBJECT) {
+    const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;
+    if (checkMs < TALLER_ALGO_OPEN.getTime() || checkMs > TALLER_ALGO_CLOSE.getTime()) {
+      return { allowed: false, reason: 'El Taller 1 de Algoritmos está fuera de horario (06/10 hasta 07/10 23:59)' };
+    }
+    if (usedAttempts >= TALLER_ALGO_MAX_ATTEMPTS) {
+      return { allowed: false, reason: 'Has alcanzado el máximo de intentos del taller' };
+    }
+    return { allowed: true, reason: null };
+  }
 
   if (subject === EXAM_SUBJECTS.PARCIAL2) {
     const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;

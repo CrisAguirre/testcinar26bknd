@@ -1,6 +1,6 @@
 import Grade from '../models/Grade.js';
 import User from '../models/User.js';
-import { KNOWN_EXAM_SUBJECTS, isSubmissionAllowed } from '../config/schedule.js';
+import { KNOWN_EXAM_SUBJECTS, isSubmissionAllowed, TALLER_ALGO_SUBJECT, isTallerAlgoOpen } from '../config/schedule.js';
 import { nowColombia } from '../config/timezone.js';
 import { checkEnrollment } from './enrollmentController.js';
 
@@ -22,7 +22,14 @@ function isExamSubject(subject) {
 // El redirect del frontend se salta con llamadas directas a la API;
 // aquí se bloquea de verdad. Solo personal privilegiado.
 // Se desactiva con EXAMS_LOCKED=false.
-function examLockError(user) {
+// Excepción: Taller 1 Algoritmos tiene ventana propia 06/10-07/10 23:59, no usa el flag global.
+function examLockError(user, subject = null, submittedAtMs = null) {
+  if (subject === TALLER_ALGO_SUBJECT) {
+    const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
+    if (isTallerAlgoOpen(checkDate)) return null;
+    if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
+    return 'El Taller 1 de Algoritmos está fuera de horario (06/10 hasta 07/10 23:59)';
+  }
   if (process.env.EXAMS_LOCKED === 'false') return null;
   if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
   return 'Exámenes bloqueados temporalmente: todavía no son las fechas';
@@ -162,7 +169,7 @@ export async function submitMyGrade(req, res) {
     const isPrivileged = user && ['admin', 'coordinator', 'teacher'].includes(user.role);
 
     if (!isPrivileged && isExamSubject(subject)) {
-      const lockReason = examLockError(user);
+      const lockReason = examLockError(user, subject, submittedAt);
       if (lockReason) {
         return res.status(403).json({ error: lockReason });
       }
@@ -181,7 +188,7 @@ export async function submitMyGrade(req, res) {
       }
     }
 
-    if (KNOWN_EXAM_SUBJECTS.has(subject)) {
+    if (KNOWN_EXAM_SUBJECTS.has(subject) || subject === TALLER_ALGO_SUBJECT) {
       if (!isPrivileged) {
         const usedAttempts = await Grade.countDocuments({ student: req.user.id, subject });
         const decision = isSubmissionAllowed(subject, user.email, usedAttempts, submittedAt, nowColombia());
@@ -223,7 +230,7 @@ export async function updateMyGrade(req, res) {
     }
 
     if (isExamSubject(grade.subject)) {
-      const lockReason = examLockError({ role: req.user.role });
+      const lockReason = examLockError({ role: req.user.role }, grade.subject, Date.now());
       if (lockReason) {
         return res.status(403).json({ error: lockReason });
       }
