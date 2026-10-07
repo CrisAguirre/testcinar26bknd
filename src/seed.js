@@ -89,10 +89,19 @@ async function seedStudents() {
   }
 
   // Regla general: todo student que NO sea de los 7 DW -> solo Algoritmos
-  // (no toca admin/coordinator/teacher ni a los 7 DW)
+  // (no toca admin/coordinator/teacher ni a los 7 DW).
+  // Excepción: estudiantes de Desarrollo Web 2 (ej. da.lopez) se conservan
+  // en su curso: no se les crea inscripción en algoritmos ni se les borra DW2.
+  const dw2UserIds = new Set(
+    (await Enrollment.find({ course: 'desarrollo-web-2' }).select('user')).map((e) => String(e.user))
+  );
   const otherStudents = await User.find({ role: 'student' });
   for (const u of otherStudents) {
     if (dwEmails.has((u.email || '').toLowerCase())) continue;
+    if (dw2UserIds.has(String(u._id))) {
+      console.log(`Se conserva en DW2 (sin cambios): ${u.full_name} (${u.email})`);
+      continue;
+    }
     let algoEnr = await Enrollment.findOne({ user: u._id, course: 'algoritmos' });
     if (!algoEnr) {
       await Enrollment.create({ user: u._id, course: 'algoritmos', canPresent: true });
