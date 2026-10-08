@@ -80,6 +80,14 @@ if (isProd && allowedOrigins.length === 0) {
 app.use(helmet());
 app.use(express.json({ limit: '100kb' }));
 
+// Health-check público y liviano (sin auth). Va ANTES de los rate-limits para
+// que los pings de wake-up no consuman el presupuesto compartido del aula.
+// El frontend lo usa en PROD vía proxy (/api/health -> Render) para despertar
+// la instancia free antes de pedir datos reales.
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true, timestamp: new Date().toISOString() });
+});
+
 // P1: rate limiting anti fuerza-bruta y abuso.
 // Límites pensados para redes escolares (varios estudiantes tras una misma IP).
 const loginLimiter = rateLimit({
