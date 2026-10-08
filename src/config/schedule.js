@@ -20,6 +20,30 @@ export function isTallerAlgoOpen(checkDate = nowColombia()) {
   return ms >= TALLER_ALGO_OPEN.getTime() && ms <= TALLER_ALGO_CLOSE.getTime();
 }
 
+// Parcial 1 DW2: Preparación (2 intentos, desde 08/10 hasta 13/10 23:59)
+// + Evaluación (2 intentos, 14/10 todo el día). Hora Colombia.
+// 20 preguntas (10 Arquitectura TrueX + 10 Svelte) del banco de 50.
+export const DW2P1_SUBJECT = 'Desarrollo Web 2 - Parcial 1';
+export const DW2P1_PREP_OPEN = new Date('2026-10-08T00:00:00-05:00');
+export const DW2P1_PREP_CLOSE = new Date('2026-10-13T23:59:59-05:00');
+export const DW2P1_OPEN = new Date('2026-10-14T00:00:00-05:00');
+export const DW2P1_CLOSE = new Date('2026-10-14T23:59:59-05:00');
+export const DW2P1_MAX_ATTEMPTS = 4;
+export const DW2P1_PREP_MAX = 2;
+
+export function isDW2P1Open(checkDate = nowColombia()) {
+  const ms = checkDate instanceof Date ? checkDate.getTime() : checkDate;
+  return ms >= DW2P1_PREP_OPEN.getTime() && ms <= DW2P1_CLOSE.getTime();
+}
+
+function isDW2P1Prep(checkMs) {
+  return checkMs >= DW2P1_PREP_OPEN.getTime() && checkMs <= DW2P1_PREP_CLOSE.getTime();
+}
+
+function isDW2P1Eval(checkMs) {
+  return checkMs >= DW2P1_OPEN.getTime() && checkMs <= DW2P1_CLOSE.getTime();
+}
+
 // Parcial 2 — Desarrollo Web 1
 // 3 simulacros + 1 evaluación.
 // Simulacros: desde el 15 de agosto hasta el inicio de la evaluación (19 ago 18:45).
@@ -140,6 +164,23 @@ export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedA
       return { allowed: false, reason: 'Has alcanzado el máximo de intentos del taller' };
     }
     return { allowed: true, reason: null };
+  }
+
+  if (subject === DW2P1_SUBJECT) {
+    const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;
+    if (isDW2P1Eval(checkMs)) {
+      if (usedAttempts >= DW2P1_MAX_ATTEMPTS) {
+        return { allowed: false, reason: 'Has alcanzado el máximo de intentos del parcial' };
+      }
+      return { allowed: true, reason: null };
+    }
+    if (isDW2P1Prep(checkMs)) {
+      if (usedAttempts >= DW2P1_PREP_MAX) {
+        return { allowed: false, reason: 'Ya usaste tus 2 intentos de preparación; la evaluación es el 14/10' };
+      }
+      return { allowed: true, reason: null };
+    }
+    return { allowed: false, reason: 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación el 14/10 todo el día' };
   }
 
   if (subject === EXAM_SUBJECTS.PARCIAL2) {

@@ -1,6 +1,6 @@
 import Grade from '../models/Grade.js';
 import User from '../models/User.js';
-import { KNOWN_EXAM_SUBJECTS, isSubmissionAllowed, TALLER_ALGO_SUBJECT, isTallerAlgoOpen } from '../config/schedule.js';
+import { KNOWN_EXAM_SUBJECTS, isSubmissionAllowed, TALLER_ALGO_SUBJECT, isTallerAlgoOpen, DW2P1_SUBJECT, isDW2P1Open } from '../config/schedule.js';
 import { nowColombia } from '../config/timezone.js';
 import { checkEnrollment } from './enrollmentController.js';
 
@@ -23,12 +23,19 @@ function isExamSubject(subject) {
 // aquí se bloquea de verdad. Solo personal privilegiado.
 // Se desactiva con EXAMS_LOCKED=false.
 // Excepción: Taller 1 Algoritmos tiene ventana propia 06/10-07/10 23:59, no usa el flag global.
+// Excepción: Parcial 1 DW2 tiene ventana propia 15/10 18:00-20:00.
 function examLockError(user, subject = null, submittedAtMs = null) {
   if (subject === TALLER_ALGO_SUBJECT) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
     if (isTallerAlgoOpen(checkDate)) return null;
     if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
     return 'El Taller 1 de Algoritmos está fuera de horario (06/10 hasta 07/10 23:59)';
+  }
+  if (subject === DW2P1_SUBJECT) {
+    const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
+    if (isDW2P1Open(checkDate)) return null;
+    if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
+    return 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación el 14/10 todo el día';
   }
   if (process.env.EXAMS_LOCKED === 'false') return null;
   if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
@@ -188,7 +195,7 @@ export async function submitMyGrade(req, res) {
       }
     }
 
-    if (KNOWN_EXAM_SUBJECTS.has(subject) || subject === TALLER_ALGO_SUBJECT) {
+    if (KNOWN_EXAM_SUBJECTS.has(subject) || subject === TALLER_ALGO_SUBJECT || subject === DW2P1_SUBJECT) {
       if (!isPrivileged) {
         const usedAttempts = await Grade.countDocuments({ student: req.user.id, subject });
         const decision = isSubmissionAllowed(subject, user.email, usedAttempts, submittedAt, nowColombia());
