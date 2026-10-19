@@ -4,7 +4,7 @@ import { KNOWN_EXAM_SUBJECTS, isSubmissionAllowed, TALLER_ALGO_SUBJECT, isTaller
 import { nowColombia } from '../config/timezone.js';
 import { checkEnrollment } from './enrollmentController.js';
 
-function getCourseFromSubject(subject) {
+export function getCourseFromSubject(subject) {
   if (!subject) return null;
   const s = subject.toLowerCase();
   if (s.includes('desarrollo web 1')) return 'desarrollo-web-1';
@@ -13,7 +13,7 @@ function getCourseFromSubject(subject) {
   return null;
 }
 
-function isExamSubject(subject) {
+export function isExamSubject(subject) {
   if (!subject || typeof subject !== 'string') return false;
   return KNOWN_EXAM_SUBJECTS.has(subject) || getCourseFromSubject(subject) !== null;
 }
@@ -25,7 +25,7 @@ function isExamSubject(subject) {
 // Excepción: Taller 1 Algoritmos tiene ventana propia 06/10-07/10 23:59, no usa el flag global.
 // Excepciones con ventana propia: Taller 1 y Parcial 1 de Algoritmos, y Parcial 1 DW2
 // (evaluación re-habilitada el 21/10; preparación histórica hasta el 13/10).
-function examLockError(user, subject = null, submittedAtMs = null) {
+export function examLockError(user, subject = null, submittedAtMs = null) {
   if (subject === TALLER_ALGO_SUBJECT) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
     if (isTallerAlgoOpen(checkDate)) return null;
