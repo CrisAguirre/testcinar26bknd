@@ -49,13 +49,12 @@ describe('examLockError — Parcial 1 de Algoritmos', () => {
 });
 
 describe('examLockError — Parcial 1 de DW2 (prep 8–13/10, evaluación 21/10)', () => {
-  it('preparación (10/10) y evaluación (21/10) no bloquean; el hueco 14–20/10 sí', () => {
+  it('preparación (10/10) y evaluación (21/10) no bloquean; en el hueco el rechazo lo da el gate de envío (isSubmissionAllowed)', () => {
     assert.equal(examLockError(ESTUDIANTE, 'Desarrollo Web 2 - Parcial 1', ms('2026-10-10T20:00:00')), null);
     assert.equal(examLockError(ESTUDIANTE, 'Desarrollo Web 2 - Parcial 1', ms('2026-10-21T15:00:00')), null);
-    assert.equal(
-      examLockError(ESTUDIANTE, 'Desarrollo Web 2 - Parcial 1', ms('2026-10-16T12:00:00')),
-      'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación el 21/10 todo el día'
-    );
+    // El hueco 14–20/10 cae dentro de isDW2P1Open (prep → evaluación), así que el candado no lo bloquea;
+    // quien rechaza es isSubmissionAllowed con el mensaje del 21/10 (cubierto en schedule.test.js).
+    assert.equal(examLockError(ESTUDIANTE, 'Desarrollo Web 2 - Parcial 1', ms('2026-10-16T12:00:00')), null);
   });
 
   it('el hueco solo aplica a estudiantes (admin/coordinación pasan)', () => {
