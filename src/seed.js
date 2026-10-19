@@ -42,6 +42,25 @@ const coordinator = {
   role: 'coordinator'
 };
 
+// Estudiantes de demostración (19/10/2026): demo1 para Algoritmos, demo2 para Desarrollo Web 2.
+// Sirven para verificar los parciales en producción sin usar cuentas de estudiantes reales.
+const demoStudents = [
+  {
+    username: 'demo1',
+    email: 'demo1@cinar.edu.co',
+    password: 'Demo1@2026',
+    full_name: 'DEMO 1 — Algoritmos',
+    course: 'algoritmos'
+  },
+  {
+    username: 'demo2',
+    email: 'demo2@cinar.edu.co',
+    password: 'Demo2@2026',
+    full_name: 'DEMO 2 — Desarrollo Web 2',
+    course: 'desarrollo-web-2'
+  }
+];
+
 async function seedStudents() {
   await mongoose.connect(MONGODB_URI);
   console.log('Conectado a MongoDB');
@@ -85,6 +104,45 @@ async function seedStudents() {
     const stray = await Enrollment.deleteMany({ user: user._id, course: { $in: ['desarrollo-web-1', 'desarrollo-web-2'] } });
     if (stray.deletedCount > 0) {
       console.log(`Limpieza DW para ${s.full_name}: eliminadas ${stray.deletedCount}`);
+    }
+  }
+
+  // Sembrar estudiantes DEMO (idempotente): demo1 -> Algoritmos, demo2 -> Desarrollo Web 2.
+  // Se crean ANTES de la regla general para que demo2 quede protegido por su inscripción en DW2.
+  for (const s of demoStudents) {
+    const hashedPassword = await bcrypt.hash(s.password, 10);
+    const user = await User.findOneAndUpdate(
+      { email: s.email },
+      {
+        $set: {
+          username: s.username,
+          email: s.email,
+          password: hashedPassword,
+          full_name: s.full_name,
+          role: 'student'
+        }
+      },
+      { new: true, upsert: true }
+    );
+    console.log(`Upserted Demo: ${s.full_name} (${s.username})`);
+
+    const enrollment = await Enrollment.findOne({ user: user._id, course: s.course });
+    if (!enrollment) {
+      await Enrollment.create({ user: user._id, course: s.course, canPresent: true });
+      console.log(`Inscrito en ${s.course}: ${s.full_name}`);
+    } else if (!enrollment.canPresent) {
+      enrollment.canPresent = true;
+      await enrollment.save();
+      console.log(`Desbloqueado ${s.course}: ${s.full_name}`);
+    }
+
+    // Cada demo pertenece únicamente a su curso (elimina inscripciones cruzadas si existieran).
+    const otherCourses = ['desarrollo-web-1', 'desarrollo-web-2', 'algoritmos'].filter(
+      (c) => c !== s.course
+    );
+    const stray = await Enrollment.deleteMany({ user: user._id, course: { $in: otherCourses } });
+    if (stray.deletedCount > 0) {
+      console.log(`Limpieza de cursos para ${s.full_name}: eliminadas ${stray.deletedCount}`);
     }
   }
 
