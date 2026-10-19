@@ -24,7 +24,7 @@ export function isExamSubject(subject) {
 // Se desactiva con EXAMS_LOCKED=false.
 // Excepción: Taller 1 Algoritmos tiene ventana propia 06/10-07/10 23:59, no usa el flag global.
 // Excepciones con ventana propia: Taller 1 y Parcial 1 de Algoritmos, y Parcial 1 DW2
-// (evaluación re-habilitada el 21/10; preparación histórica hasta el 13/10).
+// (evaluación habilitada del 19 al 21/10; preparación histórica hasta el 13/10).
 export function examLockError(user, subject = null, submittedAtMs = null) {
   if (subject === TALLER_ALGO_SUBJECT) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
@@ -42,7 +42,7 @@ export function examLockError(user, subject = null, submittedAtMs = null) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
     if (isDW2P1Open(checkDate)) return null;
     if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
-    return 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación el 21/10 todo el día';
+    return 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación del 19 al 21/10 (hasta medianoche)';
   }
   if (process.env.EXAMS_LOCKED === 'false') return null;
   if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;

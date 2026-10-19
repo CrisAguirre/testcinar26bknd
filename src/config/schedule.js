@@ -34,12 +34,12 @@ export function isAlgoP1Open(checkDate = nowColombia()) {
 }
 
 // Parcial 1 DW2: Preparación (2 intentos, histórica del 08/10 al 13/10 23:59)
-// + Evaluación (2 intentos, RE-HABILITADA el 21/10 todo el día; antes era el 14/10). Hora Colombia.
+// + Evaluación (2 intentos, habilitada del 19/10 al 21/10 a medianoche). Hora Colombia.
 // 20 preguntas (10 Arquitectura TrueX + 10 Svelte) del banco de 50.
 export const DW2P1_SUBJECT = 'Desarrollo Web 2 - Parcial 1';
 export const DW2P1_PREP_OPEN = new Date('2026-10-08T00:00:00-05:00');
 export const DW2P1_PREP_CLOSE = new Date('2026-10-13T23:59:59-05:00');
-export const DW2P1_OPEN = new Date('2026-10-21T00:00:00-05:00');
+export const DW2P1_OPEN = new Date('2026-10-19T00:00:00-05:00');
 export const DW2P1_CLOSE = new Date('2026-10-21T23:59:59-05:00');
 export const DW2P1_MAX_ATTEMPTS = 4;
 export const DW2P1_PREP_MAX = 2;
@@ -200,11 +200,11 @@ export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedA
     }
     if (isDW2P1Prep(checkMs)) {
       if (usedAttempts >= DW2P1_PREP_MAX) {
-        return { allowed: false, reason: 'Ya usaste tus 2 intentos de preparación; la evaluación es el 21/10' };
+        return { allowed: false, reason: 'Ya usaste tus 2 intentos de preparación; la evaluación es del 19 al 21/10 (hasta medianoche)' };
       }
       return { allowed: true, reason: null };
     }
-    return { allowed: false, reason: 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación el 21/10 todo el día' };
+    return { allowed: false, reason: 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación del 19 al 21/10 (hasta medianoche)' };
   }
 
   if (subject === EXAM_SUBJECTS.PARCIAL2) {

@@ -82,21 +82,23 @@ describe('Parcial 1 de Algoritmos — ventana lunes 19 y martes 20/10 (todo el d
   });
 });
 
-describe('Parcial 1 de DW2 — preparación 8–13/10 y evaluación 21/10 (todo el día)', () => {
-  it('constantes exactas: prep 8–13/10, evaluación 21/10 y esquema 2+2', () => {
+describe('Parcial 1 de DW2 — preparación 8–13/10 y evaluación del 19 al 21/10 (hasta medianoche)', () => {
+  it('constantes exactas: prep 8–13/10, evaluación 19–21/10 y esquema 2+2', () => {
     assert.equal(DW2P1_PREP_OPEN.toISOString(), '2026-10-08T05:00:00.000Z');
     assert.equal(DW2P1_PREP_CLOSE.toISOString(), '2026-10-14T04:59:59.000Z');
-    assert.equal(DW2P1_OPEN.toISOString(), '2026-10-21T05:00:00.000Z');
+    assert.equal(DW2P1_OPEN.toISOString(), '2026-10-19T05:00:00.000Z');
     assert.equal(DW2P1_CLOSE.toISOString(), '2026-10-22T04:59:59.000Z');
     assert.equal(DW2P1_PREP_MAX, 2);
     assert.equal(DW2P1_MAX_ATTEMPTS, 4);
   });
 
-  it('isDW2P1Open: cubre prep + evaluación (el hueco 14–20/10 lo bloquea el gate, no el candado)', () => {
+  it('isDW2P1Open: cubre prep + evaluación (el hueco 14–18/10 lo bloquea el gate, no el candado)', () => {
     assert.equal(isDW2P1Open(bogota('2026-10-07T23:59:59')), false);
     assert.equal(isDW2P1Open(bogota('2026-10-08T00:00:00')), true);
     assert.equal(isDW2P1Open(bogota('2026-10-13T23:59:59')), true);
     assert.equal(isDW2P1Open(bogota('2026-10-16T12:00:00')), true);
+    assert.equal(isDW2P1Open(bogota('2026-10-18T23:59:59')), true);
+    assert.equal(isDW2P1Open(bogota('2026-10-19T00:00:00')), true);
     assert.equal(isDW2P1Open(bogota('2026-10-21T00:00:00')), true);
     assert.equal(isDW2P1Open(bogota('2026-10-21T23:59:59')), true);
     assert.equal(isDW2P1Open(bogota('2026-10-22T00:00:00')), false);
@@ -108,17 +110,17 @@ describe('Parcial 1 de DW2 — preparación 8–13/10 y evaluación 21/10 (todo 
     assert.equal(isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 1, null, now).allowed, true);
     const res = isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 2, null, now);
     assert.equal(res.allowed, false);
-    assert.equal(res.reason, 'Ya usaste tus 2 intentos de preparación; la evaluación es el 21/10');
+    assert.equal(res.reason, 'Ya usaste tus 2 intentos de preparación; la evaluación es del 19 al 21/10 (hasta medianoche)');
   });
 
-  it('hueco 14–20/10: rechaza con el mensaje del 21/10', () => {
+  it('hueco 14–18/10: rechaza con el mensaje de la evaluación 19–21/10', () => {
     const res = isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 2, null, bogota('2026-10-16T12:00:00'));
     assert.equal(res.allowed, false);
-    assert.equal(res.reason, 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación el 21/10 todo el día');
+    assert.equal(res.reason, 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación del 19 al 21/10 (hasta medianoche)');
   });
 
-  it('evaluación 21/10: intentos 3 y 4 permitidos; el 5.º bloqueado por máximo', () => {
-    const now = bogota('2026-10-21T15:00:00');
+  it('evaluación 19–21/10: intentos 3 y 4 permitidos; el 5.º bloqueado por máximo', () => {
+    const now = bogota('2026-10-19T15:00:00');
     assert.equal(isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 2, null, now).allowed, true);
     assert.equal(isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 3, null, now).allowed, true);
     const res = isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 4, null, now);
@@ -126,10 +128,10 @@ describe('Parcial 1 de DW2 — preparación 8–13/10 y evaluación 21/10 (todo 
     assert.equal(res.reason, 'Has alcanzado el máximo de intentos del parcial');
   });
 
-  it('bordes: 20/10 23:59:59 rechazado (hueco) y 21/10 00:00 aceptado (evaluación)', () => {
-    const g = isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 2, ms('2026-10-20T23:59:59'), bogota('2026-10-25T09:00:00'));
+  it('bordes: 18/10 23:59:59 rechazado (hueco) y 19/10 00:00 aceptado (evaluación)', () => {
+    const g = isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 2, ms('2026-10-18T23:59:59'), bogota('2026-10-25T09:00:00'));
     assert.equal(g.allowed, false);
-    const e = isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 2, ms('2026-10-21T00:00:00'), bogota('2026-10-25T09:00:00'));
+    const e = isSubmissionAllowed(DW2P1_SUBJECT, 'd.algo@cinar.edu.co', 2, ms('2026-10-19T00:00:00'), bogota('2026-10-25T09:00:00'));
     assert.equal(e.allowed, true);
   });
 });
