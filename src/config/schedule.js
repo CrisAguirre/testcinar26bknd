@@ -20,14 +20,27 @@ export function isTallerAlgoOpen(checkDate = nowColombia()) {
   return ms >= TALLER_ALGO_OPEN.getTime() && ms <= TALLER_ALGO_CLOSE.getTime();
 }
 
-// Parcial 1 DW2: Preparación (2 intentos, desde 08/10 hasta 13/10 23:59)
-// + Evaluación (2 intentos, 14/10 todo el día). Hora Colombia.
+// Parcial 1 Algoritmos: lunes 19 y martes 20 de octubre de 2026, todo el día (hora Colombia).
+// 2 intentos (Preparación + Evaluación). 20 preguntas: 15 teóricas + 5 prácticas DFD (.dfd).
+// Se valida contra submittedAt para no perder intentos hechos en ventana pero sincronizados después.
+export const ALGO_P1_SUBJECT = 'Algoritmos - Parcial 1';
+export const ALGO_P1_OPEN = new Date('2026-10-19T00:00:00-05:00');
+export const ALGO_P1_CLOSE = new Date('2026-10-20T23:59:59-05:00');
+export const ALGO_P1_MAX_ATTEMPTS = 2;
+
+export function isAlgoP1Open(checkDate = nowColombia()) {
+  const ms = checkDate instanceof Date ? checkDate.getTime() : checkDate;
+  return ms >= ALGO_P1_OPEN.getTime() && ms <= ALGO_P1_CLOSE.getTime();
+}
+
+// Parcial 1 DW2: Preparación (2 intentos, histórica del 08/10 al 13/10 23:59)
+// + Evaluación (2 intentos, RE-HABILITADA el 21/10 todo el día; antes era el 14/10). Hora Colombia.
 // 20 preguntas (10 Arquitectura TrueX + 10 Svelte) del banco de 50.
 export const DW2P1_SUBJECT = 'Desarrollo Web 2 - Parcial 1';
 export const DW2P1_PREP_OPEN = new Date('2026-10-08T00:00:00-05:00');
 export const DW2P1_PREP_CLOSE = new Date('2026-10-13T23:59:59-05:00');
-export const DW2P1_OPEN = new Date('2026-10-14T00:00:00-05:00');
-export const DW2P1_CLOSE = new Date('2026-10-14T23:59:59-05:00');
+export const DW2P1_OPEN = new Date('2026-10-21T00:00:00-05:00');
+export const DW2P1_CLOSE = new Date('2026-10-21T23:59:59-05:00');
 export const DW2P1_MAX_ATTEMPTS = 4;
 export const DW2P1_PREP_MAX = 2;
 
@@ -166,6 +179,17 @@ export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedA
     return { allowed: true, reason: null };
   }
 
+  if (subject === ALGO_P1_SUBJECT) {
+    const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;
+    if (checkMs < ALGO_P1_OPEN.getTime() || checkMs > ALGO_P1_CLOSE.getTime()) {
+      return { allowed: false, reason: 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 y martes 20/10, todo el día)' };
+    }
+    if (usedAttempts >= ALGO_P1_MAX_ATTEMPTS) {
+      return { allowed: false, reason: 'Has alcanzado el máximo de intentos del parcial' };
+    }
+    return { allowed: true, reason: null };
+  }
+
   if (subject === DW2P1_SUBJECT) {
     const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;
     if (isDW2P1Eval(checkMs)) {
@@ -176,11 +200,11 @@ export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedA
     }
     if (isDW2P1Prep(checkMs)) {
       if (usedAttempts >= DW2P1_PREP_MAX) {
-        return { allowed: false, reason: 'Ya usaste tus 2 intentos de preparación; la evaluación es el 14/10' };
+        return { allowed: false, reason: 'Ya usaste tus 2 intentos de preparación; la evaluación es el 21/10' };
       }
       return { allowed: true, reason: null };
     }
-    return { allowed: false, reason: 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación el 14/10 todo el día' };
+    return { allowed: false, reason: 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación el 21/10 todo el día' };
   }
 
   if (subject === EXAM_SUBJECTS.PARCIAL2) {
