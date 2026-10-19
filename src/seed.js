@@ -42,8 +42,9 @@ const coordinator = {
   role: 'coordinator'
 };
 
-// Estudiantes de demostración (19/10/2026): demo1 para Algoritmos, demo2 para Desarrollo Web 2.
+// Estudiantes de demostración PERMANENTES (19/10/2026): demo1 para Algoritmos, demo2 para Desarrollo Web 2.
 // Sirven para verificar los parciales en producción sin usar cuentas de estudiantes reales.
+// El seed los recrea/actualiza en cada arranque (idempotente); no eliminarlos.
 const demoStudents = [
   {
     username: 'demo1',
