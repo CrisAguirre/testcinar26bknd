@@ -78,7 +78,9 @@ if (isProd && allowedOrigins.length === 0) {
   console.warn('AVISO: FRONTEND_URL(S) vacío en producción, ningún navegador podrá llamar la API');
 }
 app.use(helmet());
-app.use(express.json({ limit: '100kb' }));
+// 1mb: un examen con 10 respuestas abiertas largas puede superar los 100kb.
+// El límite sigue acotando el tamaño y las rutas de examen tienen auth + rate limit.
+app.use(express.json({ limit: '1mb' }));
 
 // Health-check público y liviano (sin auth). Va ANTES de los rate-limits para
 // que los pings de wake-up no consuman el presupuesto compartido del aula.
