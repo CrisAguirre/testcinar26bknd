@@ -10,6 +10,9 @@ const dfdSubmissionSchema = new mongoose.Schema({
   mimeType: { type: String, default: 'application/octet-stream' },
   fileSize: { type: Number },
   attemptNumber: { type: Number, default: 1 },
+  // Pregunta del examen a la que corresponde el archivo (posiciones 16-20).
+  // Las entregas antiguas no lo tienen; se cruzan por nombre con examData.
+  questionId: { type: Number },
   gradeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Grade' }
 }, { timestamps: true });
 

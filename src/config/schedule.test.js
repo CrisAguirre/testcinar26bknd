@@ -28,25 +28,26 @@ const ms = (iso) => bogota(iso).getTime();
 
 const ALUMNO = 'algo1@cinar.edu.co';
 
-describe('Parcial 1 de Algoritmos — ventana lunes 19 y martes 20/10 (todo el día)', () => {
-  it('constantes exactas: 19/10 00:00 → 20/10 23:59:59 y 2 intentos', () => {
+describe('Parcial 1 de Algoritmos — ventana lunes 19 al domingo 25/10 (hasta medianoche)', () => {
+  it('constantes exactas: 19/10 00:00 → 25/10 23:59:59 y 2 intentos', () => {
     assert.equal(ALGO_P1_OPEN.toISOString(), '2026-10-19T05:00:00.000Z');
-    assert.equal(ALGO_P1_CLOSE.toISOString(), '2026-10-21T04:59:59.000Z');
+    assert.equal(ALGO_P1_CLOSE.toISOString(), '2026-10-26T04:59:59.000Z');
     assert.equal(ALGO_P1_MAX_ATTEMPTS, 2);
     assert.equal(ALGO_P1_SUBJECT, 'Algoritmos - Parcial 1');
   });
 
-  it('isAlgoP1Open: bordes domingo → lunes → martes → miércoles', () => {
+  it('isAlgoP1Open: bordes domingo → lunes → domingo 25 → lunes 26', () => {
     assert.equal(isAlgoP1Open(bogota('2026-10-18T23:59:59')), false);
     assert.equal(isAlgoP1Open(bogota('2026-10-19T00:00:00')), true);
     assert.equal(isAlgoP1Open(bogota('2026-10-19T12:00:00')), true);
-    assert.equal(isAlgoP1Open(bogota('2026-10-20T23:59:59')), true);
-    assert.equal(isAlgoP1Open(bogota('2026-10-21T00:00:00')), false);
+    assert.equal(isAlgoP1Open(bogota('2026-10-25T23:59:59')), true);
+    assert.equal(isAlgoP1Open(bogota('2026-10-26T00:00:00')), false);
   });
 
   it('isAlgoP1Open acepta ms numéricos (submittedAt del intento)', () => {
     assert.equal(isAlgoP1Open(ms('2026-10-19T10:00:00')), true);
-    assert.equal(isAlgoP1Open(ms('2026-10-21T10:00:00')), false);
+    assert.equal(isAlgoP1Open(ms('2026-10-21T10:00:00')), true);
+    assert.equal(isAlgoP1Open(ms('2026-10-26T10:00:00')), false);
   });
 
   it('isSubmissionAllowed: 0 y 1 intento dentro de ventana → permitido', () => {
@@ -64,11 +65,11 @@ describe('Parcial 1 de Algoritmos — ventana lunes 19 y martes 20/10 (todo el d
   it('isSubmissionAllowed: fuera de ventana → rechaza con mensaje de horario', () => {
     const fuera = isSubmissionAllowed(ALGO_P1_SUBJECT, ALUMNO, 0, null, bogota('2026-10-18T22:00:00'));
     assert.equal(fuera.allowed, false);
-    assert.equal(fuera.reason, 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 y martes 20/10, todo el día)');
+    assert.equal(fuera.reason, 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)');
 
-    const tarde = isSubmissionAllowed(ALGO_P1_SUBJECT, ALUMNO, 0, null, bogota('2026-10-21T00:00:01'));
+    const tarde = isSubmissionAllowed(ALGO_P1_SUBJECT, ALUMNO, 0, null, bogota('2026-10-26T00:00:01'));
     assert.equal(tarde.allowed, false);
-    assert.equal(tarde.reason, 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 y martes 20/10, todo el día)');
+    assert.equal(tarde.reason, 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)');
   });
 
   it('isSubmissionAllowed: intento hecho en ventana se acepta al sincronizar tarde (submittedAt manda)', () => {
@@ -76,9 +77,9 @@ describe('Parcial 1 de Algoritmos — ventana lunes 19 y martes 20/10 (todo el d
     assert.deepEqual(res, { allowed: true, reason: null });
   });
 
-  it('isSubmissionAllowed: bordes del 20/10 23:59:59 dentro y 21/10 00:00 fuera', () => {
-    assert.equal(isSubmissionAllowed(ALGO_P1_SUBJECT, ALUMNO, 1, ms('2026-10-20T23:59:59'), bogota('2026-10-25T09:00:00')).allowed, true);
-    assert.equal(isSubmissionAllowed(ALGO_P1_SUBJECT, ALUMNO, 1, ms('2026-10-21T00:00:00'), bogota('2026-10-25T09:00:00')).allowed, false);
+  it('isSubmissionAllowed: bordes del 25/10 23:59:59 dentro y 26/10 00:00 fuera', () => {
+    assert.equal(isSubmissionAllowed(ALGO_P1_SUBJECT, ALUMNO, 1, ms('2026-10-25T23:59:59'), bogota('2026-10-25T23:59:59')).allowed, true);
+    assert.equal(isSubmissionAllowed(ALGO_P1_SUBJECT, ALUMNO, 1, ms('2026-10-26T00:00:00'), bogota('2026-10-26T00:00:00')).allowed, false);
   });
 });
 

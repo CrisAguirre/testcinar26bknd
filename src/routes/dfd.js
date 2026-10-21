@@ -27,8 +27,9 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       return res.status(400).json({ error: 'No se envió ningún archivo .dfd' });
     }
 
-    const { examType = 'taller-1', period = '2026-3', attemptNumber = 1, gradeId } = req.body;
+    const { examType = 'taller-1', period = '2026-3', attemptNumber = 1, gradeId, questionId } = req.body;
 
+    const parsedQuestionId = parseInt(questionId);
     const submission = await DfdSubmission.create({
       student: req.user.id,
       course: 'algoritmos',
@@ -39,6 +40,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       mimeType: req.file.mimetype || 'application/octet-stream',
       fileSize: req.file.size,
       attemptNumber: parseInt(attemptNumber) || 1,
+      questionId: Number.isFinite(parsedQuestionId) ? parsedQuestionId : undefined,
       gradeId: gradeId || undefined
     });
 
@@ -46,7 +48,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       message: 'Archivo DFD subido correctamente',
       submissionId: submission._id,
       fileName: submission.originalFileName,
-      fileSize: submission.fileSize
+      fileSize: submission.fileSize,
+      questionId: submission.questionId ?? null
     });
   } catch (err) {
     console.error('Error al subir archivo DFD:', err);

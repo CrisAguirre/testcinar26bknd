@@ -18,19 +18,20 @@ afterEach(() => {
 });
 
 describe('examLockError — Parcial 1 de Algoritmos', () => {
-  it('dentro de la ventana (19–20/10) no bloquea al estudiante', () => {
+  it('dentro de la ventana (19–25/10) no bloquea al estudiante', () => {
     assert.equal(examLockError(ESTUDIANTE, 'Algoritmos - Parcial 1', ms('2026-10-19T10:00:00')), null);
     assert.equal(examLockError(ESTUDIANTE, 'Algoritmos - Parcial 1', ms('2026-10-20T23:59:59')), null);
+    assert.equal(examLockError(ESTUDIANTE, 'Algoritmos - Parcial 1', ms('2026-10-25T23:59:59')), null);
   });
 
   it('fuera de la ventana rechaza con el mensaje exacto', () => {
     assert.equal(
       examLockError(ESTUDIANTE, 'Algoritmos - Parcial 1', ms('2026-10-18T22:00:00')),
-      'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 y martes 20/10, todo el día)'
+      'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)'
     );
     assert.equal(
-      examLockError(ESTUDIANTE, 'Algoritmos - Parcial 1', ms('2026-10-21T00:00:01')),
-      'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 y martes 20/10, todo el día)'
+      examLockError(ESTUDIANTE, 'Algoritmos - Parcial 1', ms('2026-10-26T00:00:01')),
+      'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)'
     );
   });
 
@@ -43,7 +44,7 @@ describe('examLockError — Parcial 1 de Algoritmos', () => {
   it('sin usuario (petición anónima) también se bloquea fuera de horario', () => {
     assert.equal(
       examLockError(null, 'Algoritmos - Parcial 1', ms('2026-10-15T10:00:00')),
-      'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 y martes 20/10, todo el día)'
+      'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)'
     );
   });
 });

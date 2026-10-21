@@ -20,13 +20,15 @@ export function isTallerAlgoOpen(checkDate = nowColombia()) {
   return ms >= TALLER_ALGO_OPEN.getTime() && ms <= TALLER_ALGO_CLOSE.getTime();
 }
 
-// Parcial 1 Algoritmos: lunes 19 y martes 20 de octubre de 2026, todo el día (hora Colombia).
+// Parcial 1 Algoritmos: lunes 19 al domingo 25 de octubre de 2026, hasta medianoche (hora Colombia).
 // 2 intentos (Preparación + Evaluación). 20 preguntas: 15 teóricas + 5 prácticas DFD (.dfd).
 // Se valida contra submittedAt para no perder intentos hechos en ventana pero sincronizados después.
+// Ampliación 21/10: cierre pasa del 20/10 al domingo 25/10 23:59:59.
 export const ALGO_P1_SUBJECT = 'Algoritmos - Parcial 1';
 export const ALGO_P1_OPEN = new Date('2026-10-19T00:00:00-05:00');
-export const ALGO_P1_CLOSE = new Date('2026-10-20T23:59:59-05:00');
+export const ALGO_P1_CLOSE = new Date('2026-10-25T23:59:59-05:00');
 export const ALGO_P1_MAX_ATTEMPTS = 2;
+export const ALGO_P1_DURATION_SECONDS = 120 * 60; // 2 horas por intento
 
 export function isAlgoP1Open(checkDate = nowColombia()) {
   const ms = checkDate instanceof Date ? checkDate.getTime() : checkDate;
@@ -182,7 +184,7 @@ export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedA
   if (subject === ALGO_P1_SUBJECT) {
     const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;
     if (checkMs < ALGO_P1_OPEN.getTime() || checkMs > ALGO_P1_CLOSE.getTime()) {
-      return { allowed: false, reason: 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 y martes 20/10, todo el día)' };
+      return { allowed: false, reason: 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)' };
     }
     if (usedAttempts >= ALGO_P1_MAX_ATTEMPTS) {
       return { allowed: false, reason: 'Has alcanzado el máximo de intentos del parcial' };

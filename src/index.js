@@ -16,6 +16,7 @@ import scheduleRoutes from './routes/schedule.js';
 import enrollmentRoutes from './routes/enrollments.js';
 import adminRoutes from './routes/admin.js';
 import dfdRoutes from './routes/dfd.js';
+import examRoutes from './routes/exams.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -188,6 +189,7 @@ app.use('/api/schedule', scheduleRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/dfd', dfdRoutes);
+app.use('/api/exams', examRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });

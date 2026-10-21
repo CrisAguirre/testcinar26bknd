@@ -36,7 +36,7 @@ export function examLockError(user, subject = null, submittedAtMs = null) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
     if (isAlgoP1Open(checkDate)) return null;
     if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
-    return 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 y martes 20/10, todo el día)';
+    return 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)';
   }
   if (subject === DW2P1_SUBJECT) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
@@ -243,16 +243,77 @@ export async function updateMyGrade(req, res) {
       return res.status(403).json({ error: 'No puedes modificar una calificación que no te pertenece' });
     }
 
+    const { examData, score, max_score, comments, submittedAt } = req.body;
+    const submittedAtMs = Number.isFinite(submittedAt) ? submittedAt : Date.now();
+
     if (isExamSubject(grade.subject)) {
-      const lockReason = examLockError({ role: req.user.role }, grade.subject, Date.now());
+      const lockReason = examLockError({ role: req.user.role }, grade.subject, submittedAtMs);
       if (lockReason) {
         return res.status(403).json({ error: lockReason });
       }
     }
 
-    const { examData } = req.body;
+    // Un intento reabierto (por ejemplo, el que se autoenvió al agotarse las
+    // 2 horas) puede actualizar su nota al finalizar. Los intentos normales
+    // siguen usando POST /grades/mine y no pueden reescribir su puntaje.
+    let parsedExamData = null;
+    try {
+      parsedExamData = JSON.parse(grade.examData || 'null');
+    } catch {
+      parsedExamData = null;
+    }
+    const isReopened = grade.subject === ALGO_P1_SUBJECT && parsedExamData?.reopened === true;
+
+    // Si el docente ya revisó los DFD y registró la nota definitiva, el
+    // estudiante no puede volver a sobrescribirla (la ventana sigue abierta
+    // hasta el 25/10, pero la revisión es posterior al envío).
+    if (isReopened && parsedExamData?.reviewedAt) {
+      return res.status(403).json({ error: 'Este intento ya fue calificado por el docente' });
+    }
+
+    if (score !== undefined || max_score !== undefined || comments !== undefined) {
+      if (!isReopened) {
+        return res.status(403).json({ error: 'Este intento no está reabierto para edición' });
+      }
+      if (score !== undefined) {
+        if (typeof score !== 'number' || !Number.isFinite(score) || score < 0) {
+          return res.status(400).json({ error: 'Puntaje inválido' });
+        }
+        grade.score = score;
+      }
+      if (max_score !== undefined) {
+        if (typeof max_score !== 'number' || !Number.isFinite(max_score) || max_score <= 0 || max_score > 100) {
+          return res.status(400).json({ error: 'Puntaje máximo inválido' });
+        }
+        grade.max_score = max_score;
+      }
+      if (grade.score > grade.max_score) {
+        return res.status(400).json({ error: 'El puntaje no puede superar el máximo' });
+      }
+      if (comments !== undefined) {
+        grade.comments = comments;
+      }
+    }
+
     if (examData !== undefined) {
-      grade.examData = examData;
+      if (isReopened) {
+        try {
+          const parsed = typeof examData === 'string' ? JSON.parse(examData) : examData;
+          // Se mantiene `reopened` para que un reintento idempotente (red
+          // caída después de guardar) también sea aceptado. La ventana cierra
+          // el 25/10 y el borrador se elimina al finalizar.
+          parsed.reopened = true;
+          parsed.finalizedAt = new Date().toISOString();
+          grade.examData = JSON.stringify(parsed);
+        } catch {
+          grade.examData = examData;
+        }
+      } else {
+        grade.examData = examData;
+      }
+    } else if (isReopened) {
+      parsedExamData.finalizedAt = new Date().toISOString();
+      grade.examData = JSON.stringify(parsedExamData);
     }
 
     await grade.save();

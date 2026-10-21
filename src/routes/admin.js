@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 import { requireRole } from '../middlewares/requireRole.js';
 import * as adminController from '../controllers/adminController.js';
+import { reopenAlgoP1 } from '../controllers/examAdminController.js';
 
 const router = Router();
 
@@ -61,5 +62,10 @@ router.post('/grade-sheets', adminController.createGradeSheet);
 router.get('/grade-sheets', adminController.listGradeSheets);
 router.put('/grade-sheets/:id', adminController.updateGradeSheet);
 router.patch('/grade-sheets/:id/sign', adminController.signGradeSheet);
+
+// ==========================================
+// Exámenes: reapertura del mismo intento
+// ==========================================
+router.post('/exams/algo-p1/reopen', reopenAlgoP1);
 
 export default router;
