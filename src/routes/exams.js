@@ -2,7 +2,12 @@ import { Router } from 'express';
 import mongoose from 'mongoose';
 import ExamDraft from '../models/ExamDraft.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
-import { ALGO_P1_SUBJECT, isAlgoP1Open } from '../config/schedule.js';
+import {
+  ALGO_P1_SUBJECT,
+  isAlgoP1Open,
+  DW2P1_SUBJECT,
+  isDW2P1Open
+} from '../config/schedule.js';
 
 const router = Router();
 router.use(authenticateToken);
@@ -39,103 +44,120 @@ function sanitizeDraft(body = {}) {
   };
 }
 
-// Devuelve el borrador del estudiante autenticado (si existe).
-router.get('/algo-p1/draft', async (req, res) => {
-  try {
-    const draft = await ExamDraft.findOne({
-      student: req.user.id,
-      subject: ALGO_P1_SUBJECT,
-      status: 'in_progress'
-    }).lean();
+function registerDraftRoutes({ basePath, subject, isOpenFn, closedErrorMsg }) {
+  // Devuelve el borrador del estudiante autenticado (si existe).
+  router.get(`/${basePath}/draft`, async (req, res) => {
+    try {
+      const draft = await ExamDraft.findOne({
+        student: req.user.id,
+        subject,
+        status: 'in_progress'
+      }).lean();
 
-    if (!draft) {
-      return res.status(404).json({ error: 'No hay un intento en progreso' });
+      if (!draft) {
+        return res.status(404).json({ error: 'No hay un intento en progreso' });
+      }
+      res.json(draft);
+    } catch (err) {
+      console.error(`Error al leer borrador de ${subject}:`, err);
+      res.status(500).json({ error: 'Error interno' });
     }
-    res.json(draft);
-  } catch (err) {
-    console.error('Error al leer borrador del parcial:', err);
-    res.status(500).json({ error: 'Error interno' });
-  }
-});
+  });
 
-// Guarda/actualiza el borrador. Es idempotente: el frontend puede llamarlo
-// cada pocos segundos sin crear registros duplicados.
-router.put('/algo-p1/draft', async (req, res) => {
-  try {
-    const existing = await ExamDraft.findOne({
-      student: req.user.id,
-      subject: ALGO_P1_SUBJECT
-    }).select('_id');
+  // Guarda/actualiza el borrador. Es idempotente: el frontend puede llamarlo
+  // cada pocos segundos sin crear registros duplicados.
+  router.put(`/${basePath}/draft`, async (req, res) => {
+    try {
+      const existing = await ExamDraft.findOne({
+        student: req.user.id,
+        subject
+      }).select('_id');
 
-    // Después del cierre no se permiten borradores nuevos, pero sí conservar
-    // el que ya existía (para no perder respuestas si el estudiante reconecta).
-    if (!isAlgoP1Open() && !existing) {
-      return res.status(403).json({
-        error: 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)'
-      });
-    }
+      const isPrivileged = req.user && ['admin', 'coordinator', 'teacher'].includes(req.user.role);
+      // Después del cierre no se permiten borradores nuevos, pero sí conservar
+      // el que ya existía (para no perder respuestas si el estudiante reconecta).
+      if (!isPrivileged && !isOpenFn() && !existing) {
+        return res.status(403).json({ error: closedErrorMsg });
+      }
 
-    const payload = sanitizeDraft(req.body);
-    if (payload.questions.length === 0) {
-      return res.status(400).json({ error: 'El borrador no contiene preguntas' });
-    }
-    if (Buffer.byteLength(JSON.stringify(payload), 'utf8') > MAX_PAYLOAD_BYTES) {
-      return res.status(413).json({ error: 'El borrador supera el tamaño permitido' });
-    }
+      const payload = sanitizeDraft(req.body);
+      if (payload.questions.length === 0) {
+        return res.status(400).json({ error: 'El borrador no contiene preguntas' });
+      }
+      if (Buffer.byteLength(JSON.stringify(payload), 'utf8') > MAX_PAYLOAD_BYTES) {
+        return res.status(413).json({ error: 'El borrador supera el tamaño permitido' });
+      }
 
-    const draft = await ExamDraft.findOneAndUpdate(
-      { student: req.user.id, subject: ALGO_P1_SUBJECT },
-      {
-        $set: {
-          ...payload,
-          status: 'in_progress'
+      const draft = await ExamDraft.findOneAndUpdate(
+        { student: req.user.id, subject },
+        {
+          $set: {
+            ...payload,
+            status: 'in_progress'
+          }
+        },
+        {
+          upsert: true,
+          new: true,
+          setDefaultsOnInsert: true,
+          runValidators: true
         }
-      },
-      {
-        upsert: true,
-        new: true,
-        setDefaultsOnInsert: true,
-        runValidators: true
-      }
-    );
+      );
 
-    res.json({
-      ok: true,
-      draftId: draft._id,
-      updatedAt: draft.updatedAt,
-      currentIndex: draft.currentIndex,
-      answered: Object.keys(payload.answers || {}).length
-    });
-  } catch (err) {
-    // Dos autosaves simultáneos pueden chocar con el índice único: se
-    // resuelve reintentando el update (sin crear duplicados).
-    if (err?.code === 11000) {
-      try {
-        const payload = sanitizeDraft(req.body);
-        const draft = await ExamDraft.findOneAndUpdate(
-          { student: req.user.id, subject: ALGO_P1_SUBJECT },
-          { $set: { ...payload, status: 'in_progress' } },
-          { new: true, runValidators: true }
-        );
-        return res.json({ ok: true, draftId: draft._id, updatedAt: draft.updatedAt });
-      } catch (retryErr) {
-        console.error('Error al guardar borrador (reintento):', retryErr);
+      res.json({
+        ok: true,
+        draftId: draft._id,
+        updatedAt: draft.updatedAt,
+        currentIndex: draft.currentIndex,
+        answered: Object.keys(payload.answers || {}).length
+      });
+    } catch (err) {
+      // Dos autosaves simultáneos pueden chocar con el índice único: se
+      // resuelve reintentando el update (sin crear duplicados).
+      if (err?.code === 11000) {
+        try {
+          const payload = sanitizeDraft(req.body);
+          const draft = await ExamDraft.findOneAndUpdate(
+            { student: req.user.id, subject },
+            { $set: { ...payload, status: 'in_progress' } },
+            { new: true, runValidators: true }
+          );
+          return res.json({ ok: true, draftId: draft._id, updatedAt: draft.updatedAt });
+        } catch (retryErr) {
+          console.error(`Error al guardar borrador de ${subject} (reintento):`, retryErr);
+        }
       }
+      console.error(`Error al guardar borrador de ${subject}:`, err);
+      res.status(500).json({ error: 'Error interno' });
     }
-    console.error('Error al guardar borrador del parcial:', err);
-    res.status(500).json({ error: 'Error interno' });
-  }
+  });
+
+  // Elimina el borrador cuando el intento ya quedó registrado o se descarta.
+  router.delete(`/${basePath}/draft`, async (req, res) => {
+    try {
+      await ExamDraft.deleteOne({ student: req.user.id, subject });
+      res.json({ ok: true });
+    } catch (err) {
+      console.error(`Error al eliminar borrador de ${subject}:`, err);
+      res.status(500).json({ error: 'Error interno' });
+    }
+  });
+}
+
+// Parcial 1 de Algoritmos
+registerDraftRoutes({
+  basePath: 'algo-p1',
+  subject: ALGO_P1_SUBJECT,
+  isOpenFn: isAlgoP1Open,
+  closedErrorMsg: 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)'
 });
 
-// Elimina el borrador cuando el intento ya quedó registrado.
-router.delete('/algo-p1/draft', async (req, res) => {
-  try {
-    await ExamDraft.deleteOne({ student: req.user.id, subject: ALGO_P1_SUBJECT });
-    res.json({ ok: true });
-  } catch (err) {
-    console.error('Error al eliminar borrador del parcial:', err);
-    res.status(500).json({ error: 'Error interno' });
-  }
+// Parcial 1 de Desarrollo Web 2
+registerDraftRoutes({
+  basePath: 'dw2-p1',
+  subject: DW2P1_SUBJECT,
+  isOpenFn: isDW2P1Open,
+  closedErrorMsg: 'El Parcial 1 de DW2 está fuera de horario (evaluación del 19 al 21/10, hasta medianoche)'
 });
 
 export default router;
