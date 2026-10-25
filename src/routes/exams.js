@@ -149,7 +149,7 @@ registerDraftRoutes({
   basePath: 'algo-p1',
   subject: ALGO_P1_SUBJECT,
   isOpenFn: isAlgoP1Open,
-  closedErrorMsg: 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)'
+  closedErrorMsg: 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al miércoles 28/10, hasta medianoche)'
 });
 
 // Parcial 1 de Desarrollo Web 2
