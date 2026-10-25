@@ -36,7 +36,7 @@ export function examLockError(user, subject = null, submittedAtMs = null) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
     if (isAlgoP1Open(checkDate)) return null;
     if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
-    return 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al domingo 25/10, hasta medianoche)';
+    return 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al miércoles 28/10, hasta medianoche)';
   }
   if (subject === DW2P1_SUBJECT) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
