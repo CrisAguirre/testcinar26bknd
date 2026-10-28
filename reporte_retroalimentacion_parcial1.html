@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Informe de Resultados y Retroalimentación Pedagógica — Parcial 1 Algoritmos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+    @page {
+      size: A4 portrait;
+      margin: 12mm 10mm 14mm 10mm;
+      @bottom-right {
+        content: "Página " counter(page) " de " counter(pages);
+        font-family: 'Inter', sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #0f172a;
+      background-color: #ffffff;
+      font-size: 9pt;
+      line-height: 1.45;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    .no-break {
+      page-break-inside: avoid;
+    }
+
+    /* HEADER BANNER */
+    .header-banner {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+      color: white;
+      padding: 22px 24px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-titles h1 {
+      font-size: 17pt;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .header-titles h2 {
+      font-size: 11pt;
+      font-weight: 500;
+      color: #bfdbfe;
+      margin-bottom: 6px;
+    }
+
+    .header-meta {
+      font-size: 8pt;
+      color: #93c5fd;
+      display: flex;
+      gap: 14px;
+    }
+
+    .header-meta span strong {
+      color: #ffffff;
+    }
+
+    .header-badge {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-align: right;
+    }
+
+    .header-badge .term {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #dbeafe;
+    }
+
+    .header-badge .val {
+      font-size: 15pt;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    /* STATS SUMMARY TILES */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+
+    .stat-card .label {
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .stat-card .number {
+      font-size: 16pt;
+      font-weight: 800;
+      color: #1e3a8a;
+    }
+
+    .stat-card .desc {
+      font-size: 7pt;
+      color: #94a3b8;
+    }
+
+    /* SECTION TITLES */
+    .section-title {
+      font-size: 12.5pt;
+      font-weight: 700;
+      color: #1e3a8a;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-top: 22px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 15px;
+      background: #2563eb;
+      border-radius: 2px;
+    }
+
+    /* TABLES */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 8.5pt;
+    }
+
+    th {
+      background: #1e293b;
+      color: #ffffff;
+      text-align: left;
+      padding: 7px 9px;
+      font-weight: 600;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    th.center, td.center {
+      text-align: center;
+    }
+
+    th.right, td.right {
+      text-align: right;
+    }
+
+    td {
+      padding: 6px 9px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 7.5pt;
+      text-align: center;
+    }
+
+    .badge-success {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .badge-primary {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+
+    .badge-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    /* CALLOUT BOXES */
+    .callout {
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 8.5pt;
+    }
+
+    .callout-info {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      color: #1e40af;
+    }
+
+    .callout-warning {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      color: #92400e;
+    }
+
+    .callout-success {
+      background: #f0fdf4;
+      border-left: 4px solid #22c55e;
+      color: #166534;
+    }
+
+    /* QUESTION CORRECTION CARDS */
+    .q-card {
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .q-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 4px;
+    }
+
+    .q-card-title {
+      font-weight: 700;
+      font-size: 9pt;
+      color: #1e3a8a;
+    }
+
+    .q-text {
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .q-answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .q-ans-box {
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 8pt;
+    }
+
+    .q-ans-correct {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .q-ans-wrong {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .q-explanation {
+      font-size: 8pt;
+      color: #475569;
+      background: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border-left: 3px solid #64748b;
+      margin-top: 4px;
+    }
+
+    /* CODE BLOCKS */
+    pre code {
+      font-family: 'Fira Code', monospace;
+      font-size: 7.5pt;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: block;
+      padding: 10px 12px;
+      border-radius: 6px;
+      overflow-x: hidden;
+      line-height: 1.35;
+      margin: 6px 0;
+      white-space: pre-wrap;
+    }
+
+    /* STUDENT RETRO CARD */
+    .student-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow: hidden;
+      page-break-inside: avoid;
+    }
+
+    .student-card-header {
+      background: #f1f5f9;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .student-card-name {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .student-card-email {
+      font-size: 8pt;
+      color: #64748b;
+    }
+
+    .student-card-score {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .student-card-body {
+      padding: 12px 14px;
+    }
+
+    .student-subgrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .teacher-note {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 8pt;
+      color: #166534;
+      margin-top: 8px;
+    }
+
+    .teacher-note strong {
+      color: #14532d;
+    }
+
+    ul.dfd-mini-list {
+      list-style-type: none;
+      font-size: 8pt;
+      margin-top: 6px;
+    }
+
+    ul.dfd-mini-list li {
+      padding: 4px 0;
+      border-bottom: 1px dashed #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    ul.dfd-mini-list li:last-child {
+      border-bottom: none;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 7.5pt;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== PÁGINA 1: RESUMEN Y LISTADO ==================== -->
+  <div class="header-banner">
+    <div class="header-titles">
+      <h1>Informe General de Resultados y Retroalimentación</h1>
+      <h2>Parcial 1 — Algoritmos y Lógica de Programación</h2>
+      <div class="header-meta">
+        <span>Materia: <strong>Algoritmos</strong></span>
+        <span>Periodo Académico: <strong>2026-3</strong></span>
+        <span>Docente / Evaluador: <strong>CINAR</strong></span>
+        <span>Fecha de Cierre: <strong>28/10/2026</strong></span>
+      </div>
+    </div>
+    <div class="header-badge">
+      <div class="term">Promedio General</div>
+      <div class="val">16.8 / 20</div>
+      <div class="term" style="margin-top: 2px;">(4.2 / 5.0)</div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">Estudiantes Evaluados</div>
+      <div class="number">11</div>
+      <div class="desc">100% de la cohorte activa</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Intentos Realizados</div>
+      <div class="number">16</div>
+      <div class="desc">5 alumnos usaron 2 intentos</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Tasa de Aprobación</div>
+      <div class="number">100%</div>
+      <div class="desc">Todos con nota ≥ 3.0 (12/20)</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Nota Máxima Obtenida</div>
+      <div class="number">20 / 20</div>
+      <div class="desc">5.0 / 5.0 (Desempeño Superior)</div>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>Propósito Pedagógico del Informe:</strong> Este documento consolida las calificaciones definitivas del <strong>Parcial 1 de Algoritmos</strong>, analizando en profundidad los aciertos y las dificultades observadas tanto en los componentes teóricos (preguntas de opción múltiple) como en los ejercicios prácticos de diseño de diagramas de flujo (.dfd). Su fin es servir como herramienta de retroalimentación formativa y guía de estudio de cara al Parcial 2.
+  </div>
+
+  <div class="section-title">1. Listado Consolidado de Calificaciones Definitivas</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 4%;">#</th>
+        <th style="width: 28%;">Estudiante</th>
+        <th style="width: 20%;">Correo Institucional</th>
+        <th class="center" style="width: 9%;">Intentos</th>
+        <th class="center" style="width: 11%;">Teoría (15)</th>
+        <th class="center" style="width: 10%;">DFD (5)</th>
+        <th class="center" style="width: 9%;">Escala 20</th>
+        <th class="center" style="width: 9%;">Escala 5.0</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+          <tr>
+            <td class="center" style="font-weight: 700;">1</td>
+            <td><strong>Oscar Alexander Rodríguez Insuasti</strong></td>
+            <td style="color: #64748b;">algo6@cinar.edu.co</td>
+            <td class="center">2</td>
+            <td class="center">15/15</td>
+            <td class="center">5/5</td>
+            <td class="center"><span class="badge badge-success">20 / 20</span></td>
+            <td class="center"><strong>5.0</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">2</td>
+            <td><strong>Iván Felipe Guancha Galindres</strong></td>
+            <td style="color: #64748b;">algo3@cinar.edu.co</td>
+            <td class="center">1</td>
+            <td class="center">15/15</td>
+            <td class="center">4/5</td>
+            <td class="center"><span class="badge badge-success">19 / 20</span></td>
+            <td class="center"><strong>4.8</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">3</td>
+            <td><strong>Johan Sebastian Rodríguez Rosero</strong></td>
+            <td style="color: #64748b;">algo8@cinar.edu.co</td>
+            <td class="center">2</td>
+            <td class="center">15/15</td>
+            <td class="center">4/5</td>
+            <td class="center"><span class="badge badge-success">19 / 20</span></td>
+            <td class="center"><strong>4.8</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">4</td>
+            <td><strong>Claudia Verónica Angulo</strong></td>
+            <td style="color: #64748b;">algo1@cinar.edu.co</td>
+            <td class="center">1</td>
+            <td class="center">14/15</td>
+            <td class="center">4/5</td>
+            <td class="center"><span class="badge badge-success">18 / 20</span></td>
+            <td class="center"><strong>4.5</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">5</td>
+            <td><strong>Brayan Buesaquillo</strong></td>
+            <td style="color: #64748b;">algo12@cinar.edu.co</td>
+            <td class="center">1</td>
+            <td class="center">15/15</td>
+            <td class="center">3/5</td>
+            <td class="center"><span class="badge badge-success">18 / 20</span></td>
+            <td class="center"><strong>4.5</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">6</td>
+            <td><strong>David Santiago Erazo Moncayo</strong></td>
+            <td style="color: #64748b;">algo11@cinar.edu.co</td>
+            <td class="center">1</td>
+            <td class="center">15/15</td>
+            <td class="center">2/5</td>
+            <td class="center"><span class="badge badge-primary">17 / 20</span></td>
+            <td class="center"><strong>4.3</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">7</td>
+            <td><strong>Juan Carlos Bastidas Montilla</strong></td>
+            <td style="color: #64748b;">algo7@cinar.edu.co</td>
+            <td class="center">2</td>
+            <td class="center">14/15</td>
+            <td class="center">2/5</td>
+            <td class="center"><span class="badge badge-primary">16 / 20</span></td>
+            <td class="center"><strong>4.0</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">8</td>
+            <td><strong>Andrés Felipe Mena Oviedo</strong></td>
+            <td style="color: #64748b;">algo4@cinar.edu.co</td>
+            <td class="center">1</td>
+            <td class="center">15/15</td>
+            <td class="center">0/5</td>
+            <td class="center"><span class="badge badge-primary">15 / 20</span></td>
+            <td class="center"><strong>3.8</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">9</td>
+            <td><strong>David Felipe Narváez</strong></td>
+            <td style="color: #64748b;">algo10@cinar.edu.co</td>
+            <td class="center">2</td>
+            <td class="center">15/15</td>
+            <td class="center">0/5</td>
+            <td class="center"><span class="badge badge-primary">15 / 20</span></td>
+            <td class="center"><strong>3.8</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">10</td>
+            <td><strong>Jairo Granja Bravo</strong></td>
+            <td style="color: #64748b;">algo5@cinar.edu.co</td>
+            <td class="center">2</td>
+            <td class="center">12/15</td>
+            <td class="center">2/5</td>
+            <td class="center"><span class="badge badge-warning">14 / 20</span></td>
+            <td class="center"><strong>3.5</strong></td>
+          </tr>
+          
+          <tr>
+            <td class="center" style="font-weight: 700;">11</td>
+            <td><strong>Julián David Reina Cabrera</strong></td>
+            <td style="color: #64748b;">jd.reina@cinar.edu.co</td>
+            <td class="center">1</td>
+            <td class="center">12/15</td>
+            <td class="center">2/5</td>
+            <td class="center"><span class="badge badge-warning">14 / 20</span></td>
+            <td class="center"><strong>3.5</strong></td>
+          </tr>
+          
+    </tbody>
+  </table>
+
+  <div class="callout callout-success">
+    <strong>Balance Cualitativo del Grupo:</strong>
+    <ul style="margin-left: 16px; margin-top: 4px;">
+      <li><strong>Nivel Alto / Superior (17 a 20 / 20 · 4.3 a 5.0):</strong> 6 estudiantes (54.5%). Destacan por su capacidad para modelar problemas en DFD y articular bucles y acumuladores.</li>
+      <li><strong>Nivel Medio / Aprobado (14 a 16 / 20 · 3.5 a 4.0):</strong> 5 estudiantes (45.5%). Poseen una base teórica sobresaliente (12 a 15 puntos) con destrezas intermedias en la resolución de problemas lógicos.</li>
+      <li><strong>Nivel Básico (&lt; 14 / 20):</strong> 0 estudiantes (0%). Ningún estudiante quedó en rango inferior a 3.5.</li>
+    </ul>
+  </div>
+
+  <!-- ==================== PÁGINA 2: BANCO DE CORRECCIÓN TEÓRICA ==================== -->
+  <div class="page-break"></div>
+  <div class="section-title">2. Banco de Corrección y Retroalimentación de Preguntas Teóricas</div>
+  <p style="margin-bottom: 12px; font-size: 8.5pt; color: #475569;">
+    A continuación se exponen las preguntas conceptuales donde se detectó mayor índice de error en los intentos de evaluación, acompañadas de la justificación técnica de la respuesta correcta y el análisis de la trampa conceptual en las opciones erróneas.
+  </p>
+
+  
+    <div class="q-card no-break">
+      <div class="q-card-header">
+        <span class="q-card-title">Nivel 1 — Secuenciales — Cálculo del promedio de 3 calificaciones</span>
+        <span class="badge badge-primary">Pregunta #1</span>
+      </div>
+      <div class="q-text">Para calcular el promedio de 3 calificaciones (c1, c2, c3), ¿cuál es la expresión correcta?</div>
+      <div class="q-answers-grid">
+        <div class="q-ans-box q-ans-correct">
+          <strong>✅ Respuesta Correcta:</strong><br>(c1 + c2 + c3) / 3
+        </div>
+        <div class="q-ans-box q-ans-wrong">
+          <strong>❌ Error Típico del Estudiante:</strong><br>c1 + c2 + c3 / 3
+        </div>
+      </div>
+      <div class="q-explanation">
+        <strong>Explicación Didáctica:</strong> Por jerarquía de operadores, la división (`/`) tiene mayor precedencia que la suma (`+`). Si no se utilizan paréntesis, la computadora primero divide `c3 / 3` y luego le suma `c1` y `c2`, arrojando un resultado matemático totalmente incorrecto. Los paréntesis obligan a que la sumatoria se resuelva en primer lugar.
+        <div style="margin-top: 4px; font-style: italic; color: #1e3a8a;">💡 Regla mnemotécnica: siempre que debas promediar o calcular porcentajes compuestos, encierra toda la suma entre paréntesis antes de dividir.</div>
+      </div>
+    </div>
+  
+    <div class="q-card no-break">
+      <div class="q-card-header">
+        <span class="q-card-title">Nivel 1 — Secuenciales — Conversión de tiempo (H, M, S) a segundos totales</span>
+        <span class="badge badge-primary">Pregunta #3</span>
+      </div>
+      <div class="q-text">Para calcular la cantidad de segundos totales dado un tiempo en horas (H), minutos (M) y segundos (S), ¿cómo se formula?</div>
+      <div class="q-answers-grid">
+        <div class="q-ans-box q-ans-correct">
+          <strong>✅ Respuesta Correcta:</strong><br>(H * 60 * 60) + (M * 60) + S
+        </div>
+        <div class="q-ans-box q-ans-wrong">
+          <strong>❌ Error Típico del Estudiante:</strong><br>(H + M + S) * 60  o  H * 60 + M * 60 + S
+        </div>
+      </div>
+      <div class="q-explanation">
+        <strong>Explicación Didáctica:</strong> Una hora tiene 60 minutos y cada minuto tiene 60 segundos (es decir, 1 hora = 3600 segundos). Un minuto equivale a 60 segundos. Por lo tanto, los segundos totales corresponden a multiplicar las horas por 3600 (`H * 60 * 60`), los minutos por 60 (`M * 60`) y sumarle directamente los segundos restantes `S` sin multiplicar.
+        <div style="margin-top: 4px; font-style: italic; color: #1e3a8a;">💡 Recuerda las equivalencias directas: 1h = 3600s, 1min = 60s.</div>
+      </div>
+    </div>
+  
+    <div class="q-card no-break">
+      <div class="q-card-header">
+        <span class="q-card-title">Nivel 1 — Operadores — Jerarquía de operadores aritméticos: 8 + 4 * 2</span>
+        <span class="badge badge-primary">Pregunta #4</span>
+      </div>
+      <div class="q-text">¿Cuál es el resultado de la expresión 8 + 4 * 2, siguiendo la jerarquía de operadores?</div>
+      <div class="q-answers-grid">
+        <div class="q-ans-box q-ans-correct">
+          <strong>✅ Respuesta Correcta:</strong><br>16
+        </div>
+        <div class="q-ans-box q-ans-wrong">
+          <strong>❌ Error Típico del Estudiante:</strong><br>24
+        </div>
+      </div>
+      <div class="q-explanation">
+        <strong>Explicación Didáctica:</strong> La multiplicación (`*`) se ejecuta antes que la suma (`+`). Primero se resuelve `4 * 2 = 8`, y posteriormente se suma `8 + 8 = 16`. Quienes respondieron 24 realizaron la suma primero (`8 + 4 = 12`) y luego multiplicaron por 2 (`12 * 2 = 24`), lo cual viola la precedencia estándar de las matemáticas y la programación.
+        <div style="margin-top: 4px; font-style: italic; color: #1e3a8a;">💡 Orden de operaciones: 1) Paréntesis, 2) Potencias/Raíces, 3) Multiplicación/División/Módulo, 4) Suma/Resta.</div>
+      </div>
+    </div>
+  
+    <div class="q-card no-break">
+      <div class="q-card-header">
+        <span class="q-card-title">Nivel 1 — Diagramas de Flujo — Simbología DFD: Lectura / Entrada de datos</span>
+        <span class="badge badge-primary">Pregunta #8</span>
+      </div>
+      <div class="q-text">¿Qué figura del diagrama de flujo representa la entrada y salida de datos (o específicamente Lectura en DFD)?</div>
+      <div class="q-answers-grid">
+        <div class="q-ans-box q-ans-correct">
+          <strong>✅ Respuesta Correcta:</strong><br>El paralelogramo (trapecio en DFD para lectura)
+        </div>
+        <div class="q-ans-box q-ans-wrong">
+          <strong>❌ Error Típico del Estudiante:</strong><br>El rectángulo (Asignación/Proceso)
+        </div>
+      </div>
+      <div class="q-explanation">
+        <strong>Explicación Didáctica:</strong> El rectángulo en la notación de diagramas de flujo y en DFD se reserva exclusivamente para asignaciones, operaciones aritméticas o procesos internos (ej: `suma = a + b`). Para interactuar con el usuario solicitando datos por teclado se utiliza la figura de Entrada/Lectura.
+        <div style="margin-top: 4px; font-style: italic; color: #1e3a8a;">💡 Rectángulo = Proceso interno. Trapecio/Paralelogramo = Entrada de datos. Cono/Óvalo = Salida a pantalla.</div>
+      </div>
+    </div>
+  
+    <div class="q-card no-break">
+      <div class="q-card-header">
+        <span class="q-card-title">Nivel 2 — Condicionales — Operador lógico Y (AND) en condiciones compuestas</span>
+        <span class="badge badge-primary">Pregunta #25</span>
+      </div>
+      <div class="q-text">Al utilizar una estructura condicional con el operador Y (AND), si la primera condición es Verdadera y la segunda es Falsa, ¿qué camino toma el flujo?</div>
+      <div class="q-answers-grid">
+        <div class="q-ans-box q-ans-correct">
+          <strong>✅ Respuesta Correcta:</strong><br>El camino de Falso (No), porque ambas condiciones deben ser obligatoriamente verdaderas.
+        </div>
+        <div class="q-ans-box q-ans-wrong">
+          <strong>❌ Error Típico del Estudiante:</strong><br>El camino de Verdadero.
+        </div>
+      </div>
+      <div class="q-explanation">
+        <strong>Explicación Didáctica:</strong> La tabla de verdad del operador lógico Y (AND / conjunción) estipula que el resultado global es Verdadero ÚNICAMENTE si TODAS las condiciones individuales son verdaderas. Basta con que una sola de las condiciones sea Falsa para que toda la expresión resulte Falsa.
+        <div style="margin-top: 4px; font-style: italic; color: #1e3a8a;">💡 Operador Y: exige que TODO se cumpla. Operador O: se conforma con que AL MENOS UNO se cumpla.</div>
+      </div>
+    </div>
+  
+    <div class="q-card no-break">
+      <div class="q-card-header">
+        <span class="q-card-title">Nivel 3 — Ciclos — Diferencia crucial entre Contador y Acumulador</span>
+        <span class="badge badge-primary">Pregunta #38</span>
+      </div>
+      <div class="q-text">En un ciclo, ¿qué es un contador y cómo se diferencia de un acumulador?</div>
+      <div class="q-answers-grid">
+        <div class="q-ans-box q-ans-correct">
+          <strong>✅ Respuesta Correcta:</strong><br>Una variable que se incrementa o decrementa en un valor CONSTANTE (ej: c = c + 1).
+        </div>
+        <div class="q-ans-box q-ans-wrong">
+          <strong>❌ Error Típico del Estudiante:</strong><br>Una variable que acumula sumas de valores variables.
+        </div>
+      </div>
+      <div class="q-explanation">
+        <strong>Explicación Didáctica:</strong> Un **contador** aumenta en saltos fijos y predecibles (generalmente de 1 en 1, como `i = i + 1`) para llevar la cuenta de repeticiones. Por el contrario, un **acumulador** o totalizador suma valores variables ingresados por el usuario o calculados en cada vuelta (ej: `suma = suma + valorLeido`).
+        <div style="margin-top: 4px; font-style: italic; color: #1e3a8a;">💡 Contador: cuenta vueltas (`c = c + 1`). Acumulador: acumula cantidades (`total = total + precio`).</div>
+      </div>
+    </div>
+  
+    <div class="q-card no-break">
+      <div class="q-card-header">
+        <span class="q-card-title">Nivel 3 — Ciclos — Condición de ciclo Mientras para repetir exactamente 10 veces</span>
+        <span class="badge badge-primary">Pregunta #40</span>
+      </div>
+      <div class="q-text">Si el contador i inicia en 1, ¿cuál condición del ciclo Mientras garantiza exactamente 10 vueltas?</div>
+      <div class="q-answers-grid">
+        <div class="q-ans-box q-ans-correct">
+          <strong>✅ Respuesta Correcta:</strong><br>Mientras i <= 10
+        </div>
+        <div class="q-ans-box q-ans-wrong">
+          <strong>❌ Error Típico del Estudiante:</strong><br>Mientras i < 10  o  Mientras i = 10
+        </div>
+      </div>
+      <div class="q-explanation">
+        <strong>Explicación Didáctica:</strong> Si se inicia en `i = 1`, la condición `i < 10` se detendrá cuando `i` llegue a 10, ejecutando solamente 9 veces (del 1 al 9). Para incluir la décima vuelta, debe utilizarse el operador relacional menor o igual (`<= 10`). Por otra parte, `i = 10` no entraría al ciclo porque al inicio `i` vale 1.
+        <div style="margin-top: 4px; font-style: italic; color: #1e3a8a;">💡 Siempre verifica los extremos: para 1..N usa `<= N`. Si inicias en 0..N-1 usa `< N`.</div>
+      </div>
+    </div>
+  
+
+  <!-- ==================== PÁGINA 3: SOLUCIONARIO PRÁCTICO DFD ==================== -->
+  <div class="page-break"></div>
+  <div class="section-title">3. Solucionario y Patrones de Diseño de Algoritmos Prácticos (DFD)</div>
+  <p style="margin-bottom: 12px; font-size: 8.5pt; color: #475569;">
+    La sección práctica evaluó 5 ejercicios por estudiante distribuidos en los 3 niveles de complejidad. Los errores más recurrentes no fueron de falta de lógica, sino de <em>sintaxis interna de DFD, confusión de nombres de variables y omisión de estructuras cíclicas</em>.
+  </p>
+
+  
+    <div class="q-card no-break" style="margin-bottom: 16px;">
+      <div class="q-card-header" style="background: #f8fafc; padding: 6px 10px; margin: -12px -14px 10px -14px; border-radius: 6px 6px 0 0;">
+        <span class="q-card-title" style="font-size: 9.5pt;">Patrón de Diseño para Algoritmos Secuenciales (101 al 107 (Nivel 1))</span>
+      </div>
+      <p style="font-size: 8pt; color: #334155; margin-bottom: 6px;"><strong>Alcance:</strong> Cálculo de salarios, áreas, promedios, conversiones y totales de venta.</p>
+      
+      <div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 6px 10px; border-radius: 4px; margin-bottom: 8px;">
+        <strong style="color: #991b1b; font-size: 7.5pt; text-transform: uppercase;">⚠️ Errores Críticos Detectados en las Entregas:</strong>
+        <ul style="margin-left: 14px; font-size: 8pt; color: #7f1d1d; margin-top: 2px;">
+          <li>Escribir valores fijos en las operaciones (ej: `suma = 3 + 5`) en lugar de usar variables.</li><li>Nombrar variables con espacios, dos puntos o caracteres especiales (ej: `leer:horas`, `1compra`).</li><li>Dividir antes de sumar por falta de paréntesis en promedios.</li>
+        </ul>
+      </div>
+
+      <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 4px;">Pseudocódigo Estándar y Estructura Óptima:</div>
+      <pre><code>Algoritmo Secuencial_Correcto
+  Inicio
+    // 1. Entrada de datos limpios
+    Leer precioUnitario, cantidad
+    // 2. Procesamiento aritmético
+    subtotal <- precioUnitario * cantidad
+    descuento <- subtotal * 0.15
+    totalPagar <- subtotal - descuento
+    // 3. Salida clara al usuario
+    Escribir "El total a pagar es: ", totalPagar
+  Fin</code></pre>
+    </div>
+  
+    <div class="q-card no-break" style="margin-bottom: 16px;">
+      <div class="q-card-header" style="background: #f8fafc; padding: 6px 10px; margin: -12px -14px 10px -14px; border-radius: 6px 6px 0 0;">
+        <span class="q-card-title" style="font-size: 9.5pt;">Patrón de Diseño para Algoritmos Condicionales (108 al 114 (Nivel 2))</span>
+      </div>
+      <p style="font-size: 8pt; color: #334155; margin-bottom: 6px;"><strong>Alcance:</strong> Evaluación de descuentos > $100.000, par/impar, mayor de edad y números positivos.</p>
+      
+      <div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 6px 10px; border-radius: 4px; margin-bottom: 8px;">
+        <strong style="color: #991b1b; font-size: 7.5pt; text-transform: uppercase;">⚠️ Errores Críticos Detectados en las Entregas:</strong>
+        <ul style="margin-left: 14px; font-size: 8pt; color: #7f1d1d; margin-top: 2px;">
+          <li>No proporcionar salida en la rama 'No / Falso' (dejar al usuario sin respuesta cuando no aplica el descuento).</li><li>Imprimir variables no declaradas o usar nombres temporales genéricos como 'x'.</li><li>Sintaxis errónea en la condición de DFD (ej: `compra es > 10000` en vez de `compra > 100000`).</li>
+        </ul>
+      </div>
+
+      <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 4px;">Pseudocódigo Estándar y Estructura Óptima:</div>
+      <pre><code>Algoritmo Condicional_Correcto (Ej: Descuento Compra)
+  Inicio
+    Leer valorCompra
+    Si (valorCompra > 100000) Entonces
+      descuento <- valorCompra * 0.10
+      totalPagar <- valorCompra - descuento
+      Escribir "Aplica descuento 10%. Total a pagar: $", totalPagar
+    Sino
+      totalPagar <- valorCompra
+      Escribir "No aplica descuento. Total a pagar: $", totalPagar
+    FinSi
+  Fin</code></pre>
+    </div>
+  
+    <div class="q-card no-break" style="margin-bottom: 16px;">
+      <div class="q-card-header" style="background: #f8fafc; padding: 6px 10px; margin: -12px -14px 10px -14px; border-radius: 6px 6px 0 0;">
+        <span class="q-card-title" style="font-size: 9.5pt;">Patrón de Diseño para Algoritmos Cíclicos (Bucles) (115 al 120 (Nivel 3))</span>
+      </div>
+      <p style="font-size: 8pt; color: #334155; margin-bottom: 6px;"><strong>Alcance:</strong> Series numéricas, factoriales, tablas de multiplicar y bucles centinela con parada en 0.</p>
+      
+      <div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 6px 10px; border-radius: 4px; margin-bottom: 8px;">
+        <strong style="color: #991b1b; font-size: 7.5pt; text-transform: uppercase;">⚠️ Errores Críticos Detectados en las Entregas:</strong>
+        <ul style="margin-left: 14px; font-size: 8pt; color: #7f1d1d; margin-top: 2px;">
+          <li>Utilizar un rombo de decisión simple `Si` esperando que se repita automáticamente sin bucle.</li><li>Olvidar el incremento del contador (`i = i + 1`), creando ciclos infinitos que congelan el software.</li><li>Colocar la instrucción de salida (Escribir) fuera del ciclo cuando se pide imprimir cada elemento de la serie.</li>
+        </ul>
+      </div>
+
+      <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 4px;">Pseudocódigo Estándar y Estructura Óptima:</div>
+      <pre><code>Algoritmo Factorial_Con_Ciclo (N >= 0)
+  Inicio
+    Leer N
+    factorial <- 1
+    i <- 1
+    Mientras (i <= N) Hacer
+      factorial <- factorial * i
+      i <- i + 1   // Incremento obligatorio para evitar ciclo infinito
+    FinMientras
+    Escribir "El factorial de ", N, " es: ", factorial
+  Fin
+
+Algoritmo Centinela_Hasta_Cero
+  Inicio
+    suma <- 0
+    mayoresCero <- 0
+    Leer num
+    Mientras (num <> 0) Hacer
+      suma <- suma + num
+      Si (num > 0) Entonces
+        mayoresCero <- mayoresCero + 1
+      FinSi
+      Leer num   // Lectura del siguiente número para avanzar el centinela
+    FinMientras
+    Escribir "Suma total: ", suma
+    Escribir "Cantidad de números mayores que cero: ", mayoresCero
+  Fin</code></pre>
+    </div>
+  
+
+  <!-- ==================== PÁGINA 4+: FICHAS INDIVIDUALES DE RETROALIMENTACIÓN ==================== -->
+  <div class="page-break"></div>
+  <div class="section-title">4. Fichas Individuales de Retroalimentación por Estudiante</div>
+  <p style="margin-bottom: 14px; font-size: 8.5pt; color: #475569;">
+    Detalle pormenorizado del desempeño individual de cada alumno, el estado de cada uno de sus 5 ejercicios prácticos DFD subidos a plataforma y las recomendaciones pedagógicas personalizadas.
+  </p>
+
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">1. Oscar Alexander Rodríguez Insuasti</span>
+          <div class="student-card-email">algo6@cinar.edu.co | Usuario: <code>algo6</code> | Intentos: 2</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-success" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 20/20 (5.0)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> Excelente dominio conceptual. En el intento 1 falló una sola pregunta sobre precedencia de operadores, la cual corrigió con éxito en el intento 2.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#115 Serie 1 al 10 (Ciclo Mientras):</strong> 
+                <span style="color: #64748b;">(EjercicioOR-1.dfd)</span> — 
+                <span>Inicialización, condición `i <= 10` e incremento `i = i + 1` correctos.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#117 Tabla de multiplicar (Ciclo Mientras):</strong> 
+                <span style="color: #64748b;">(EjercicioOR-3.dfd)</span> — 
+                <span>Lectura de N, iteración y salida formateada correctamente.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#102 Área y perímetro de círculo:</strong> 
+                <span style="color: #64748b;">(EjercicioOR-4.dfd)</span> — 
+                <span>Cálculo preciso con fórmulas de Pi * r^2 y 2 * Pi * r.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#107 Precio unitario y total compra:</strong> 
+                <span style="color: #64748b;">(EjercicioOR-5.dfd)</span> — 
+                <span>Lectura y cálculo del producto correctos.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#118 Suma hasta centinela 0:</strong> 
+                <span style="color: #64748b;">(EjercicioOR-2.dfd)</span> — 
+                <span>Control de ciclo con valor 0 y contador de positivos adecuado.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Dominio sobresaliente tanto de la teoría como de la implementación lógica en DFD. Continuar con este nivel para el estudio de funciones y arreglos en el Parcial 2.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">2. Iván Felipe Guancha Galindres</span>
+          <div class="student-card-email">algo3@cinar.edu.co | Usuario: <code>algo3</code> | Intentos: 1</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-success" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 19/20 (4.8)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> Puntaje perfecto en la parte teórica (15/15). Dominio completo de secuenciales, condicionales simples y compuestos, y ciclos.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#113 Par o Impar (Operador Mod):</strong> 
+                <span style="color: #64748b;">(nuevo (3).dfd)</span> — 
+                <span>Uso correcto de `n mod 2 = 0` y ramas condicionales.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#114 Ambos números positivos (Operador Y):</strong> 
+                <span style="color: #64748b;">(nuevo (4).dfd)</span> — 
+                <span>La condición lógica `(n1 > 0) Y (n2 > 0)` fue correcta, pero el texto del mensaje alternativo decía 'Al menos uno es positivo' en vez de 'Al menos uno no es positivo'.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#106 Descuento del 15% en compra:</strong> 
+                <span style="color: #64748b;">(nuevo (5).dfd)</span> — 
+                <span>Cálculo matemático y descuento aplicado con precisión.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#105 Promedio de 3 calificaciones:</strong> 
+                <span style="color: #64748b;">(nuevo (6).dfd)</span> — 
+                <span>Uso adecuado de paréntesis `(c1+c2+c3)/3`.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#119 Serie de Fibonacci (N términos):</strong> 
+                <span style="color: #64748b;">(nuevo (7).dfd)</span> — 
+                <span>Manejo impecable de variables auxiliares para la sucesión.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Gran rigor en la resolución de problemas lógicos. Únicamente prestar atención a los textos exactos solicitados en enunciados para no perder puntos de formato.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">3. Johan Sebastian Rodríguez Rosero</span>
+          <div class="student-card-email">algo8@cinar.edu.co | Usuario: <code>algo8</code> | Intentos: 2</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-success" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 19/20 (4.8)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> 15/15 en ambos intentos. Conoce a cabalidad los operadores relacionales, lógica booleana y la arquitectura de ciclos.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#120 Factorial con ciclo:</strong> 
+                <span style="color: #64748b;">(factorial.dfd)</span> — 
+                <span>Estructura cíclica con acumulador multiplicativo `fac = fac * i` impecable.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#108 Número positivo, negativo o cero:</strong> 
+                <span style="color: #64748b;">(_o_.dfd)</span> — 
+                <span>Anidamiento condicional doble correctamente implementado.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#106 Descuento 15%:</strong> 
+                <span style="color: #64748b;">(descuento.dfd)</span> — 
+                <span>Fórmula de resta de porcentaje directa y limpia.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#102 Área y perímetro círculo:</strong> 
+                <span style="color: #64748b;">(radio.dfd)</span> — 
+                <span>Cálculos geométricos exactos.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#109 Mayor de dos números:</strong> 
+                <span style="color: #64748b;">(mayor.dfd)</span> — 
+                <span>En el intento 2 evaluó `n1 mod 2` en vez de comparar `n1 > n2` directamente.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Excelente trabajo y perseverancia en ambos intentos. Revisar la formulación de condiciones de comparación directa vs operador residuo.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">4. Claudia Verónica Angulo</span>
+          <div class="student-card-email">algo1@cinar.edu.co | Usuario: <code>algo1</code> | Intentos: 1</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-success" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 18/20 (4.5)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> 14/15 en teoría. Tuvo una única duda conceptual en el ciclo Para (For) y su condición de conteo predeterminado.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#117 Tabla de multiplicar de N:</strong> 
+                <span style="color: #64748b;">(nuevo.dfd)</span> — 
+                <span>Ciclo de 1 a 10 con salida concatenada clara.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#116 Suma de 1 a N con ciclo:</strong> 
+                <span style="color: #64748b;">(nuevo (2).dfd)</span> — 
+                <span>Acumulador `suma = suma + i` e incremento de índice bien estructurados.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#105 Promedio de calificaciones:</strong> 
+                <span style="color: #64748b;">(nuevo (4).dfd)</span> — 
+                <span>Lectura de notas y división con precedencia correcta.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#107 Precio unitario y total:</strong> 
+                <span style="color: #64748b;">(nuevo (3).dfd)</span> — 
+                <span>Cálculo aritmético secuencial correcto.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#113 Número par o impar:</strong> 
+                <span style="color: #64748b;">(nuevo.dfd (duplicado))</span> — 
+                <span>Subió un archivo repetido y no incluyó la solución para par/impar.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Muy buen desempeño en algoritmos repetitivos y secuenciales. Asegurarse de verificar los nombres de los archivos antes de confirmar el envío en plataforma.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">5. Brayan Buesaquillo</span>
+          <div class="student-card-email">algo12@cinar.edu.co | Usuario: <code>algo12</code> | Intentos: 1</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-success" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 18/20 (4.5)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> 15/15 perfecto en preguntas teóricas, demostrando sólida base en conceptos fundamentales de lógica computacional.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#116 Suma de 1 a N:</strong> 
+                <span style="color: #64748b;">(nuevo (1).dfd)</span> — 
+                <span>Ciclo sumatorio funcional y bien controlado.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#103 Celsius a Fahrenheit:</strong> 
+                <span style="color: #64748b;">(nuevo (2).dfd)</span> — 
+                <span>Aplicación correcta de la ecuación termométrica.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#104 Cálculo de salario por horas:</strong> 
+                <span style="color: #64748b;">(nuevo (4).dfd)</span> — 
+                <span>Entrada de horas, tarifa horaria y producto final correctos.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#112 Descuento 10% si compra > 100k:</strong> 
+                <span style="color: #64748b;">(nuevo.dfd)</span> — 
+                <span>Lógica bien pensada, pero nombró una variable con espacios o caracteres no permitidos en DFD.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#115 Serie del 1 al 10:</strong> 
+                <span style="color: #64748b;">(nuevo (3).dfd)</span> — 
+                <span>Ubicó la figura de Salida (Escribir) después del cierre del ciclo en vez de adentro, mostrando solo el valor final 11.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Excelente comprensión general. Recordar que las instrucciones que deben repetirse (como imprimir cada elemento de una serie) deben estar dentro del cuerpo del ciclo.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">6. David Santiago Erazo Moncayo</span>
+          <div class="student-card-email">algo11@cinar.edu.co | Usuario: <code>algo11</code> | Intentos: 1</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-primary" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 17/20 (4.3)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> Puntaje máximo de 15/15 en preguntas teóricas. Respondió acertadamente sobre diagramas de flujo, switch/case, ciclos y precedencia.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#103 Conversión de Celsius a Fahrenheit:</strong> 
+                <span style="color: #64748b;">(nuevo (3).dfd)</span> — 
+                <span>Fórmula `F = C * 1.8 + 32` y salida de `F` impecables.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#107 Precio unitario y cantidad comprada:</strong> 
+                <span style="color: #64748b;">(nuevo (4).dfd)</span> — 
+                <span>Lectura de precio y cantidad, producto almacenado en `total` y salida correcta.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#112 Descuento 10% si compra > 100.000:</strong> 
+                <span style="color: #64748b;">(nuevo (1).dfd)</span> — 
+                <span>Calculó bien `descuento` y `total`, pero en el nodo de salida escribió `'mostrartotal: ', x` (variable `x` no definida). Además, la rama falsa no imprime el total sin descuento.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#120 Factorial de N usando ciclo:</strong> 
+                <span style="color: #64748b;">(nuevo (2).dfd)</span> — 
+                <span>Usó una figura de decisión simple `Si (i <= N)` en vez de un bucle `Mientras` o `Para`, por lo que no itera. Además mandó a imprimir `x` indefinida.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#118 Suma hasta centinela 0:</strong> 
+                <span style="color: #64748b;">(nuevo.dfd)</span> — 
+                <span>Subió un archivo que calcula promedio de 3 notas de un taller previo en lugar del problema solicitado.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Muy buena capacidad de análisis secuencial y teórico. Reforzar el uso de estructuras iterativas (bucles) y verificar siempre que las variables impresas coincidan con las calculadas.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">7. Juan Carlos Bastidas Montilla</span>
+          <div class="student-card-email">algo7@cinar.edu.co | Usuario: <code>algo7</code> | Intentos: 2</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-primary" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 16/20 (4.0)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> Gran progreso entre intentos: pasó de 9/15 a 14/15 en teoría, afianzando la jerarquía de operadores y condicionales.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#120 Factorial con ciclo Mientras:</strong> 
+                <span style="color: #64748b;">(nuevofac.dfd)</span> — 
+                <span>En el intento 2 logró la estructura de acumulación multiplicativa correcta.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#113 Par o Impar con mod:</strong> 
+                <span style="color: #64748b;">(N2-Problema 12.dfd)</span> — 
+                <span>Cálculo del residuo y bifurcación lógica adecuada.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#112 Descuento 10% en compras:</strong> 
+                <span style="color: #64748b;">(N2-Problema 12.dfd)</span> — 
+                <span>Los valores límite configurados en la decisión no correspondieron al umbral de $100.000.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#105 Promedio de notas:</strong> 
+                <span style="color: #64748b;">(nuevopromedio.dfd)</span> — 
+                <span>Falta de paréntesis en la suma antes de la división (`n1+n2+n3/3`).</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#110 Mayor de edad:</strong> 
+                <span style="color: #64748b;">(nuevoedad.dfd)</span> — 
+                <span>Condición invertida en la evaluación de `>= 18`.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Felicitaciones por aprovechar el segundo intento para superar la materia. Recordar siempre la regla de oro: la división tiene mayor prioridad que la suma, por lo que siempre se deben agrupar los sumandos entre paréntesis.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">8. Andrés Felipe Mena Oviedo</span>
+          <div class="student-card-email">algo4@cinar.edu.co | Usuario: <code>algo4</code> | Intentos: 1</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-primary" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 15/20 (3.8)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> 15/15 perfecto en la parte teórica. Comprensión conceptual intachable de las tres unidades evaluadas.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#119 Serie de Fibonacci:</strong> 
+                <span style="color: #64748b;">(algoritmoresultados.dfd)</span> — 
+                <span>Subió un archivo genérico de operaciones básicas en vez de generar la secuencia de Fibonacci.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#111 Aprobación de estudiante:</strong> 
+                <span style="color: #64748b;">(Algoritmo número N.dfd)</span> — 
+                <span>El archivo subido no contiene la condición de aprobación (`nota >= 3.0`).</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#115 Serie del 1 al 10:</strong> 
+                <span style="color: #64748b;">(preciount.cantund.dfd)</span> — 
+                <span>Subió un algoritmo de cálculo de precio en lugar del bucle del 1 al 10.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#107 Precio y cantidad:</strong> 
+                <span style="color: #64748b;">(calculosalario.dfd)</span> — 
+                <span>Subió un archivo de nómina de salario sin salida configurada.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#110 Mayor de edad:</strong> 
+                <span style="color: #64748b;">(numeroparoimpar.dfd)</span> — 
+                <span>Subió un algoritmo de par/impar en lugar de evaluar la edad.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> La teoría demuestra que posee el conocimiento. El problema radicó en el desorden al guardar y adjuntar los archivos en el formulario, subiendo archivos cruzados. En el Parcial 2 debe nombrar cada archivo claramente antes de subirlo.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">9. David Felipe Narváez</span>
+          <div class="student-card-email">algo10@cinar.edu.co | Usuario: <code>algo10</code> | Intentos: 2</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-primary" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 15/20 (3.8)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> Destacable recuperación teórica: en el segundo intento logró 15/15 en preguntas conceptuales tras un primer intento bajo.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#118 Suma hasta centinela 0:</strong> 
+                <span style="color: #64748b;">(nuevo.dfd)</span> — 
+                <span>No se implementó el bucle centinela ni la condición de parada.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#113 Par o Impar:</strong> 
+                <span style="color: #64748b;">(nuevo.dfd)</span> — 
+                <span>Archivo con asignaciones fijas sin estructura de decisión ni lectura.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#105 Promedio de 3 notas:</strong> 
+                <span style="color: #64748b;">(nuevo (2).dfd)</span> — 
+                <span>Resultado hardcodeado en la salida sin lectura de datos por teclado.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#114 Ambos positivos:</strong> 
+                <span style="color: #64748b;">(nuevo (3).dfd)</span> — 
+                <span>No se utilizó el operador lógico Y para enlazar ambas condiciones.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#102 Área y perímetro círculo:</strong> 
+                <span style="color: #64748b;">(nuevo (4).dfd)</span> — 
+                <span>Fórmulas incompletas sin cálculo de radio al cuadrado.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Gran demostración de compromiso al estudiar la teoría para el intento 2. Para los talleres prácticos, practicar la construcción paso a paso en el software DFD sin apresurarse a colocar valores fijos.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">10. Jairo Granja Bravo</span>
+          <div class="student-card-email">algo5@cinar.edu.co | Usuario: <code>algo5</code> | Intentos: 2</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-warning" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 14/20 (3.5)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> 12/15 en teoría en el segundo intento. Buenos conceptos en secuenciales y condicionales.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#104 Salario por horas trabajadas:</strong> 
+                <span style="color: #64748b;">(nuevo (4).dfd)</span> — 
+                <span>Lectura y cálculo de nómina básica correcto.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#101 Operaciones aritméticas básicas:</strong> 
+                <span style="color: #64748b;">(nuevo (5).dfd)</span> — 
+                <span>Suma, resta, multiplicación y división bien implementadas.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#112 Descuento 10% en compras:</strong> 
+                <span style="color: #64748b;">(nuevo (6).dfd)</span> — 
+                <span>No aplicó la resta del descuento al valor de la compra.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#116 Suma de 1 a N con ciclo:</strong> 
+                <span style="color: #64748b;">(nuevo (7).dfd)</span> — 
+                <span>Faltó la instrucción de incremento del contador, generando ciclo potencial infinito.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#119 Serie de Fibonacci:</strong> 
+                <span style="color: #64748b;">(nuevo (8).dfd)</span> — 
+                <span>Lógica de intercambio de variables a y b incompleta.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Aprobado satisfactoriamente. Practicar con especial énfasis en el control de ciclos: recordar que todo ciclo necesita inicialización, condición y actualización obligatoria.
+        </div>
+      </div>
+    </div>
+  
+    <div class="student-card no-break">
+      <div class="student-card-header">
+        <div>
+          <span class="student-card-name">11. Julián David Reina Cabrera</span>
+          <div class="student-card-email">jd.reina@cinar.edu.co | Usuario: <code>JDRC13@LgC26</code> | Intentos: 1</div>
+        </div>
+        <div class="student-card-score">
+          <span class="badge badge-warning" style="font-size: 9pt; padding: 4px 10px;">
+            Nota Final: 14/20 (3.5)
+          </span>
+        </div>
+      </div>
+      <div class="student-card-body">
+        <div style="font-size: 8pt; margin-bottom: 6px;">
+          <strong>Desempeño Teórico:</strong> 12/15 en teoría (80%). Identifica bien las fases de un algoritmo, estructuras de control y tipos de datos.
+        </div>
+        
+        <div style="font-size: 8pt; font-weight: 700; color: #1e3a8a; margin-top: 8px;">
+          Evaluación de Algoritmos Prácticos (.dfd):
+        </div>
+        <ul class="dfd-mini-list">
+          
+            <li>
+              <span>
+                <strong>#104 Salario por horas trabajadas:</strong> 
+                <span style="color: #64748b;">(nuevo.dfd)</span> — 
+                <span>Reconocimiento pedagógico a la formulación de variables de entrada y cálculo de salario.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#101 Operaciones aritméticas básicas:</strong> 
+                <span style="color: #64748b;">(nuevo (2).dfd)</span> — 
+                <span>Reconocimiento pedagógico a la estructura de las cuatro operaciones aritméticas elementales.</span>
+              </span>
+              <span class="badge badge-success" style="margin-left: 8px; white-space: nowrap;">
+                1/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#112 Descuento en compras:</strong> 
+                <span style="color: #64748b;">(nuevo (1).dfd)</span> — 
+                <span>Escribió `1compra es> 10000` en la condición, lo cual genera error léxico en DFD.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#118 Suma hasta 0:</strong> 
+                <span style="color: #64748b;">(nuevo (3).dfd)</span> — 
+                <span>Algoritmo incompleto, con condición invertida y salida de variable inexistente `x`.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+            <li>
+              <span>
+                <strong>#116 Suma de 1 a N:</strong> 
+                <span style="color: #64748b;">(No subido)</span> — 
+                <span>No subió archivo para esta pregunta.</span>
+              </span>
+              <span class="badge badge-danger" style="margin-left: 8px; white-space: nowrap;">
+                0/1
+              </span>
+            </li>
+          
+        </ul>
+
+        <div class="teacher-note">
+          <strong>Recomendación Formativa del Docente:</strong> Nota final consolidada en 14/20 (3.5/5.0) con asignación de 2 puntos en DFD por parte del docente. Para el Parcial 2, es imperativo corregir la nomenclatura de variables en DFD (sin dos puntos ni números al inicio) y afianzar la lógica de bucles repetitivos.
+        </div>
+      </div>
+    </div>
+  
+
+  <div class="footer">
+    CINAR Sistemas Educativos — Plataforma de Evaluaciones en Línea · Reporte Oficial de Calificaciones y Retroalimentación Pedagógica · Generado automáticamente el 27/10/2026
+  </div>
+
+</body>
+</html>
