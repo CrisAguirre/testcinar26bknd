@@ -18,7 +18,7 @@ router.use(authenticateToken);
 router.get('/mine', getStudentGrades);
 router.post('/mine', submitMyGrade);
 router.put('/mine/:id', updateMyGrade);
-router.get('/', requireRole('admin', 'teacher'), getAllGrades);
+router.get('/', getAllGrades);
 router.get('/:id', getGradeById);
 router.post('/', requireRole('admin', 'teacher'), createGrade);
 router.put('/:id', requireRole('admin', 'teacher'), updateGrade);
