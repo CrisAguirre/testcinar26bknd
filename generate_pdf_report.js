@@ -45,6 +45,26 @@ const studentsData = [
     teacherRecommendations: "Gran rigor en la resolución de problemas lógicos. Únicamente prestar atención a los textos exactos solicitados en enunciados para no perder puntos de formato."
   },
   {
+    name: "Andrea Lisseth Quiscualtud",
+    email: "algo2@cinar.edu.co",
+    username: "ALQ2@LgC26",
+    attempts: [
+      { num: 1, score: 19, max: 20, scale5: "4.8", mc: "15/15", dfd: "4/5", date: "27/10/2026, 8:19 p. m." }
+    ],
+    finalScore: 19,
+    finalScale5: "4.8",
+    status: "Sobresaliente",
+    theoryFeedback: "Puntaje perfecto de 15/15 en preguntas teóricas (100%). Extraordinario dominio de condicionales anidados, bucles de repetición, variables acumuladoras y jerarquía de operadores.",
+    dfdExercises: [
+      { id: 120, name: "Factorial con ciclo Mientras", file: "nuevo (8).dfd", score: "1/1", status: "Aprobado", note: "Bucle iterativo `i <= n` con acumulador multiplicativo `f = f * i` y control de ciclo impecable." },
+      { id: 109, name: "Mayor de dos números (con igualdad)", file: "nuevo (9).dfd", score: "1/1", status: "Aprobado", note: "Estructura anidada completa: evalúa `A > B`, `B > A` e incluye la salida 'son iguales' con precisión." },
+      { id: 107, name: "Precio unitario y total compra", file: "nuevo (11).dfd", score: "1/1", status: "Aprobado", note: "Lectura de precio y cantidad, producto almacenado en `total` y salida limpia." },
+      { id: 114, name: "Ambos números positivos (Operador Y)", file: "nuevo (12).dfd", score: "1/1", status: "Aprobado", note: "Condición compuesta `A > 0 Y B > 0` correcta con los mensajes requeridos en ambas ramas." },
+      { id: 112, name: "Descuento 10% si compra > 100.000", file: "nuevo (10).dfd", score: "0/1", status: "No aprobado", note: "Lógica matemática perfecta (`total = compra * 0.9` y `total = compra`), pero en el nodo de salida escribió 'total a pagar' como literal sin concatenar la variable calculada `total`." }
+    ],
+    teacherRecommendations: "Desempeño sobresaliente con una de las mejores calificaciones del curso (19/20 - 4.8). Su lógica algorítmica y comprensión de bucles y condicionales anidados es excelente. Únicamente asegurarse de incluir la variable en las figuras de salida."
+  },
+  {
     name: "Johan Sebastian Rodríguez Rosero",
     email: "algo8@cinar.edu.co",
     username: "algo8",
@@ -830,26 +850,26 @@ function buildHtml() {
     </div>
     <div class="header-badge">
       <div class="term">Promedio General</div>
-      <div class="val">16.8 / 20</div>
-      <div class="term" style="margin-top: 2px;">(4.2 / 5.0)</div>
+      <div class="val">17.0 / 20</div>
+      <div class="term" style="margin-top: 2px;">(4.3 / 5.0)</div>
     </div>
   </div>
 
   <div class="stats-grid">
     <div class="stat-card">
       <div class="label">Estudiantes Evaluados</div>
-      <div class="number">11</div>
+      <div class="number">12</div>
       <div class="desc">100% de la cohorte activa</div>
     </div>
     <div class="stat-card">
       <div class="label">Intentos Realizados</div>
-      <div class="number">16</div>
+      <div class="number">17</div>
       <div class="desc">5 alumnos usaron 2 intentos</div>
     </div>
     <div class="stat-card">
       <div class="label">Tasa de Aprobación</div>
       <div class="number">100%</div>
-      <div class="desc">Todos con nota ≥ 3.0 (12/20)</div>
+      <div class="desc">Todos con nota ≥ 3.5 (14/20)</div>
     </div>
     <div class="stat-card">
       <div class="label">Nota Máxima Obtenida</div>
@@ -901,8 +921,8 @@ function buildHtml() {
   <div class="callout callout-success">
     <strong>Balance Cualitativo del Grupo:</strong>
     <ul style="margin-left: 16px; margin-top: 4px;">
-      <li><strong>Nivel Alto / Superior (17 a 20 / 20 · 4.3 a 5.0):</strong> 6 estudiantes (54.5%). Destacan por su capacidad para modelar problemas en DFD y articular bucles y acumuladores.</li>
-      <li><strong>Nivel Medio / Aprobado (14 a 16 / 20 · 3.5 a 4.0):</strong> 5 estudiantes (45.5%). Poseen una base teórica sobresaliente (12 a 15 puntos) con destrezas intermedias en la resolución de problemas lógicos.</li>
+      <li><strong>Nivel Alto / Superior (17 a 20 / 20 · 4.3 a 5.0):</strong> 7 estudiantes (58.3%). Destacan por su capacidad para modelar problemas en DFD y articular bucles y acumuladores.</li>
+      <li><strong>Nivel Medio / Aprobado (14 a 16 / 20 · 3.5 a 4.0):</strong> 5 estudiantes (41.7%). Poseen una base teórica sobresaliente (12 a 15 puntos) con destrezas intermedias en la resolución de problemas lógicos.</li>
       <li><strong>Nivel Básico (&lt; 14 / 20):</strong> 0 estudiantes (0%). Ningún estudiante quedó en rango inferior a 3.5.</li>
     </ul>
   </div>
