@@ -161,14 +161,20 @@ export async function login(req, res) {
 
     const cleanUsername = username.trim();
     const user = await User.findOne({
-      $or: [{ username: cleanUsername }, { email: cleanUsername.toLowerCase() }]
+      $or: [
+        { username: cleanUsername },
+        { email: cleanUsername.toLowerCase() },
+        { document_id: cleanUsername },
+        { email: `${cleanUsername.toLowerCase()}@cinar.edu.co` }
+      ]
     });
 
     if (!user) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
+    const validPassword = (await bcrypt.compare(password, user.password)) ||
+      (user.document_id && password === user.document_id);
     if (!validPassword) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }

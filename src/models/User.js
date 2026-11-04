@@ -28,6 +28,11 @@ const userSchema = new mongoose.Schema({
     enum: ['student', 'teacher', 'admin', 'coordinator'],
     default: 'student'
   },
+  document_id: {
+    type: String,
+    trim: true,
+    default: null
+  },
   // P2: refresh token rotativo (solo hash + expiración, nunca el token plano).
   refreshTokenHash: {
     type: String,

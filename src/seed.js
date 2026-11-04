@@ -32,6 +32,7 @@ const algoStudents = [
   { code: '12', full_name: 'Brayan Buesaquillo', username: 'BB12@LgC26', email: 'algo12@cinar.edu.co', password: '@cc3500' },
   { code: '13', full_name: 'Julián David Reina Cabrera', username: 'JDRC13@LgC26', email: 'jd.reina@cinar.edu.co', password: '@cc3500' },
   { code: '14', full_name: 'Jefferson Orlando Toro Burbano', username: 'JOTB14@LgC26', email: 'jefferinxx@gmail.com', password: '@cc3500' },
+  { code: '15', full_name: 'Andrés Ojeda', username: 'AO15@LgC26', email: 'g.ojeda@cinar.edu.co', password: '@cc3500', document_id: '1004235398' },
 ];
 
 const coordinator = {
@@ -80,7 +81,8 @@ async function seedStudents() {
       email: s.email,
       password: hashedPassword,
       full_name: s.full_name,
-      role: 'student'
+      role: 'student',
+      ...(s.document_id ? { document_id: s.document_id } : {})
     };
 
     let user = await User.findOneAndUpdate(
@@ -120,7 +122,8 @@ async function seedStudents() {
           email: s.email,
           password: hashedPassword,
           full_name: s.full_name,
-          role: 'student'
+          role: 'student',
+      ...(s.document_id ? { document_id: s.document_id } : {})
         }
       },
       { new: true, upsert: true }
