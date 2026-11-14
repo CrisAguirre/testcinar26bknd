@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
 import ExamDraft from '../models/ExamDraft.js';
+import User from '../models/User.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 import {
   ALGO_P1_SUBJECT,
@@ -76,7 +77,9 @@ function registerDraftRoutes({ basePath, subject, isOpenFn, closedErrorMsg }) {
       const isPrivileged = req.user && ['admin', 'coordinator', 'teacher'].includes(req.user.role);
       // Después del cierre no se permiten borradores nuevos, pero sí conservar
       // el que ya existía (para no perder respuestas si el estudiante reconecta).
-      if (!isPrivileged && !isOpenFn() && !existing) {
+      const user = await User.findById(req.user.id).select('email role');
+      const open = isOpenFn(undefined, user?.email);
+      if (!isPrivileged && !open && !existing) {
         return res.status(403).json({ error: closedErrorMsg });
       }
 

@@ -73,6 +73,20 @@ async function seedStudents() {
   const dwEmails = new Set(dw1Students.map((s) => s.email.toLowerCase()));
   console.log('Omitiendo 7 DW por instrucción (sin cambios):', [...dwEmails].join(', '));
 
+  // Asegurar habilitación de Harold Quiroz en Desarrollo Web 2 con canPresent: true
+  const harold = await User.findOne({ email: 'h.quiroz@cinar.edu.co' });
+  if (harold) {
+    const haroldEnr = await Enrollment.findOne({ user: harold._id, course: 'desarrollo-web-2' });
+    if (!haroldEnr) {
+      await Enrollment.create({ user: harold._id, course: 'desarrollo-web-2', canPresent: true });
+      console.log('Inscrito en Desarrollo Web 2: Harold Quiroz');
+    } else if (!haroldEnr.canPresent) {
+      haroldEnr.canPresent = true;
+      await haroldEnr.save();
+      console.log('Habilitado en Desarrollo Web 2: Harold Quiroz');
+    }
+  }
+
   // Sembrar estudiantes de Algoritmos y registrarlos en Algoritmos
   for (const s of algoStudents) {
     const hashedPassword = await bcrypt.hash(s.password, 10);

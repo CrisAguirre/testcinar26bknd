@@ -34,13 +34,13 @@ export function examLockError(user, subject = null, submittedAtMs = null) {
   }
   if (subject === ALGO_P1_SUBJECT) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
-    if (isAlgoP1Open(checkDate)) return null;
+    if (isAlgoP1Open(checkDate, user?.email)) return null;
     if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
     return 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al miércoles 28/10, hasta medianoche)';
   }
   if (subject === DW2P1_SUBJECT) {
     const checkDate = submittedAtMs && Number.isFinite(submittedAtMs) ? new Date(submittedAtMs) : nowColombia();
-    if (isDW2P1Open(checkDate)) return null;
+    if (isDW2P1Open(checkDate, user?.email)) return null;
     if (user && ['admin', 'coordinator', 'teacher'].includes(user.role)) return null;
     return 'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación del 19 al 21/10 (hasta medianoche)';
   }
@@ -247,7 +247,8 @@ export async function updateMyGrade(req, res) {
     const submittedAtMs = Number.isFinite(submittedAt) ? submittedAt : Date.now();
 
     if (isExamSubject(grade.subject)) {
-      const lockReason = examLockError({ role: req.user.role }, grade.subject, submittedAtMs);
+      const user = await User.findById(req.user.id).select('email role');
+      const lockReason = examLockError(user || { role: req.user.role }, grade.subject, submittedAtMs);
       if (lockReason) {
         return res.status(403).json({ error: lockReason });
       }

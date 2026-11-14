@@ -31,8 +31,12 @@ export const ALGO_P1_CLOSE = new Date('2026-10-28T23:59:59-05:00');
 export const ALGO_P1_MAX_ATTEMPTS = 2;
 export const ALGO_P1_DURATION_SECONDS = 120 * 60; // 2 horas por intento
 
-export function isAlgoP1Open(checkDate = nowColombia()) {
+export function isAlgoP1Open(checkDate = nowColombia(), userEmail = '') {
   const ms = checkDate instanceof Date ? checkDate.getTime() : checkDate;
+  const override = getAlgoP1Override(userEmail);
+  if (override) {
+    return ms >= override.open && ms <= override.close;
+  }
   return ms >= ALGO_P1_OPEN.getTime() && ms <= ALGO_P1_CLOSE.getTime();
 }
 
@@ -47,8 +51,12 @@ export const DW2P1_CLOSE = new Date('2026-10-21T23:59:59-05:00');
 export const DW2P1_MAX_ATTEMPTS = 4;
 export const DW2P1_PREP_MAX = 2;
 
-export function isDW2P1Open(checkDate = nowColombia()) {
+export function isDW2P1Open(checkDate = nowColombia(), userEmail = '') {
   const ms = checkDate instanceof Date ? checkDate.getTime() : checkDate;
+  const override = getDW2P1Override(userEmail);
+  if (override) {
+    return ms >= override.open && ms <= override.close;
+  }
   return ms >= DW2P1_PREP_OPEN.getTime() && ms <= DW2P1_CLOSE.getTime();
 }
 
@@ -56,7 +64,11 @@ function isDW2P1Prep(checkMs) {
   return checkMs >= DW2P1_PREP_OPEN.getTime() && checkMs <= DW2P1_PREP_CLOSE.getTime();
 }
 
-function isDW2P1Eval(checkMs) {
+function isDW2P1Eval(checkMs, userEmail = '') {
+  const override = getDW2P1Override(userEmail);
+  if (override) {
+    return checkMs >= override.open && checkMs <= override.close;
+  }
   return checkMs >= DW2P1_OPEN.getTime() && checkMs <= DW2P1_CLOSE.getTime();
 }
 
@@ -78,6 +90,10 @@ export const PARCIAL2_MAX_TOTAL = PARCIAL2_MAX_SIMULACROS + PARCIAL2_MAX_EVALUAC
 // Parcial 2 habilitado para Harold Esteban Quiroz Álvarez desde el
 // sábado 22 hasta el jueves 27 de agosto de 2026, 11:59 PM hora Colombia
 // (3 simulacros + 1 evaluación).
+// Habilitación Parcial 1 Algoritmos para Andrés Ojeda:
+// desde el 14/11 hasta el domingo 22 de noviembre de 2026 a medianoche (hora Colombia).
+// Habilitación Parcial 1 DW2 para Harold Quiroz:
+// desde el 14/11 hasta el domingo 22 de noviembre de 2026 a medianoche (hora Colombia).
 export const STUDENT_OVERRIDES = {
   'd.azain@cinar.edu.co': {
     tallerDeadline: new Date(2026, 7, 19, 16, 0),
@@ -86,9 +102,41 @@ export const STUDENT_OVERRIDES = {
   'h.quiroz@cinar.edu.co': {
     parcial2SimulacroStart: new Date(2026, 7, 22, 0, 0),
     parcial2EvalStart: new Date(2026, 7, 22, 0, 0),
-    parcial2EvalEnd: new Date(2026, 7, 27, 23, 59)
+    parcial2EvalEnd: new Date(2026, 7, 27, 23, 59),
+    dw2P1Open: new Date('2026-11-14T00:00:00-05:00'),
+    dw2P1Close: new Date('2026-11-22T23:59:59-05:00'),
+    dw2P1MaxAttempts: 4
+  },
+  'g.ojeda@cinar.edu.co': {
+    algoP1Open: new Date('2026-11-14T00:00:00-05:00'),
+    algoP1Close: new Date('2026-11-22T23:59:59-05:00'),
+    algoP1MaxAttempts: 2
   }
 };
+
+export function getAlgoP1Override(email) {
+  const key = (email || '').toLowerCase();
+  const override = STUDENT_OVERRIDES[key];
+  if (!override || !override.algoP1Close) return null;
+  return {
+    email: key,
+    open: (override.algoP1Open || ALGO_P1_OPEN).getTime(),
+    close: override.algoP1Close.getTime(),
+    maxAttempts: override.algoP1MaxAttempts || ALGO_P1_MAX_ATTEMPTS
+  };
+}
+
+export function getDW2P1Override(email) {
+  const key = (email || '').toLowerCase();
+  const override = STUDENT_OVERRIDES[key];
+  if (!override || !override.dw2P1Close) return null;
+  return {
+    email: key,
+    open: (override.dw2P1Open || DW2P1_OPEN).getTime(),
+    close: override.dw2P1Close.getTime(),
+    maxAttempts: override.dw2P1MaxAttempts || DW2P1_MAX_ATTEMPTS
+  };
+}
 
 export function getParcial2Override(email) {
   const key = (email || '').toLowerCase();
@@ -184,6 +232,16 @@ export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedA
 
   if (subject === ALGO_P1_SUBJECT) {
     const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;
+    const override = getAlgoP1Override(userEmail);
+    if (override) {
+      if (checkMs < override.open || checkMs > override.close) {
+        return { allowed: false, reason: 'El Parcial 1 de Algoritmos está fuera de tu horario habilitado (hasta el 22/11 23:59)' };
+      }
+      if (usedAttempts >= override.maxAttempts) {
+        return { allowed: false, reason: 'Has alcanzado el máximo de intentos del parcial' };
+      }
+      return { allowed: true, reason: null };
+    }
     if (checkMs < ALGO_P1_OPEN.getTime() || checkMs > ALGO_P1_CLOSE.getTime()) {
       return { allowed: false, reason: 'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al miércoles 28/10, hasta medianoche)' };
     }
@@ -195,7 +253,17 @@ export function isSubmissionAllowed(subject, userEmail, usedAttempts, submittedA
 
   if (subject === DW2P1_SUBJECT) {
     const checkMs = submittedAtMs && Number.isFinite(submittedAtMs) ? submittedAtMs : nowMs;
-    if (isDW2P1Eval(checkMs)) {
+    const override = getDW2P1Override(userEmail);
+    if (override) {
+      if (checkMs < override.open || checkMs > override.close) {
+        return { allowed: false, reason: 'El Parcial 1 de DW2 está fuera de tu horario habilitado (hasta el 22/11 23:59)' };
+      }
+      if (usedAttempts >= override.maxAttempts) {
+        return { allowed: false, reason: 'Has alcanzado el máximo de intentos del parcial' };
+      }
+      return { allowed: true, reason: null };
+    }
+    if (isDW2P1Eval(checkMs, userEmail)) {
       if (usedAttempts >= DW2P1_MAX_ATTEMPTS) {
         return { allowed: false, reason: 'Has alcanzado el máximo de intentos del parcial' };
       }

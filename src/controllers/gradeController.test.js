@@ -113,3 +113,26 @@ describe('getCourseFromSubject / isExamSubject', () => {
     assert.equal(isExamSubject(123), false);
   });
 });
+
+describe('examLockError — Habilitación especial Andrés Ojeda y Harold Quiroz', () => {
+  const ANDRES_USER = { role: 'student', email: 'g.ojeda@cinar.edu.co' };
+  const HAROLD_USER = { role: 'student', email: 'h.quiroz@cinar.edu.co' };
+
+  it('Andrés Ojeda: no se bloquea en su ventana (14–22/11); se bloquea fuera', () => {
+    assert.equal(examLockError(ANDRES_USER, 'Algoritmos - Parcial 1', ms('2026-11-14T10:00:00')), null);
+    assert.equal(examLockError(ANDRES_USER, 'Algoritmos - Parcial 1', ms('2026-11-22T23:59:59')), null);
+    assert.equal(
+      examLockError(ANDRES_USER, 'Algoritmos - Parcial 1', ms('2026-11-23T00:00:01')),
+      'El Parcial 1 de Algoritmos está fuera de horario (lunes 19 al miércoles 28/10, hasta medianoche)'
+    );
+  });
+
+  it('Harold Quiroz: no se bloquea en su ventana de DW2 P1 (14–22/11); se bloquea fuera', () => {
+    assert.equal(examLockError(HAROLD_USER, 'Desarrollo Web 2 - Parcial 1', ms('2026-11-14T10:00:00')), null);
+    assert.equal(examLockError(HAROLD_USER, 'Desarrollo Web 2 - Parcial 1', ms('2026-11-22T23:59:59')), null);
+    assert.equal(
+      examLockError(HAROLD_USER, 'Desarrollo Web 2 - Parcial 1', ms('2026-11-23T00:00:01')),
+      'El Parcial 1 de DW2: preparación hasta el 13/10 y evaluación del 19 al 21/10 (hasta medianoche)'
+    );
+  });
+});

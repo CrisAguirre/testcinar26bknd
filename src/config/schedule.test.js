@@ -168,3 +168,51 @@ describe('Asuntos que no son evaluación de estos parciales', () => {
     );
   });
 });
+
+describe('Habilitación especial Andrés Ojeda (Algoritmos P1) y Harold Quiroz (DW2 P1) — 14/11 al 22/11 23:59', () => {
+  const ANDRES = 'g.ojeda@cinar.edu.co';
+  const HAROLD = 'h.quiroz@cinar.edu.co';
+
+  it('Andrés Ojeda: ventana habilitada del 14/11 al 22/11 23:59:59', () => {
+    assert.equal(isAlgoP1Open(bogota('2026-11-13T23:59:59'), ANDRES), false);
+    assert.equal(isAlgoP1Open(bogota('2026-11-14T00:00:00'), ANDRES), true);
+    assert.equal(isAlgoP1Open(bogota('2026-11-18T12:00:00'), ANDRES), true);
+    assert.equal(isAlgoP1Open(bogota('2026-11-22T23:59:59'), ANDRES), true);
+    assert.equal(isAlgoP1Open(bogota('2026-11-23T00:00:00'), ANDRES), false);
+  });
+
+  it('Andrés Ojeda: envíos permitidos en su ventana y rechazo por máximo', () => {
+    const now = bogota('2026-11-15T10:00:00');
+    assert.equal(isSubmissionAllowed(ALGO_P1_SUBJECT, ANDRES, 0, null, now).allowed, true);
+    assert.equal(isSubmissionAllowed(ALGO_P1_SUBJECT, ANDRES, 1, null, now).allowed, true);
+    const maxRes = isSubmissionAllowed(ALGO_P1_SUBJECT, ANDRES, 2, null, now);
+    assert.equal(maxRes.allowed, false);
+    assert.equal(maxRes.reason, 'Has alcanzado el máximo de intentos del parcial');
+
+    const outRes = isSubmissionAllowed(ALGO_P1_SUBJECT, ANDRES, 0, null, bogota('2026-11-23T00:00:01'));
+    assert.equal(outRes.allowed, false);
+    assert.equal(outRes.reason, 'El Parcial 1 de Algoritmos está fuera de tu horario habilitado (hasta el 22/11 23:59)');
+  });
+
+  it('Harold Quiroz: ventana habilitada de DW2 P1 del 14/11 al 22/11 23:59:59', () => {
+    assert.equal(isDW2P1Open(bogota('2026-11-13T23:59:59'), HAROLD), false);
+    assert.equal(isDW2P1Open(bogota('2026-11-14T00:00:00'), HAROLD), true);
+    assert.equal(isDW2P1Open(bogota('2026-11-18T12:00:00'), HAROLD), true);
+    assert.equal(isDW2P1Open(bogota('2026-11-22T23:59:59'), HAROLD), true);
+    assert.equal(isDW2P1Open(bogota('2026-11-23T00:00:00'), HAROLD), false);
+  });
+
+  it('Harold Quiroz: envíos permitidos en su ventana (hasta 4 intentos) y rechazo por máximo', () => {
+    const now = bogota('2026-11-15T10:00:00');
+    assert.equal(isSubmissionAllowed(DW2P1_SUBJECT, HAROLD, 0, null, now).allowed, true);
+    assert.equal(isSubmissionAllowed(DW2P1_SUBJECT, HAROLD, 2, null, now).allowed, true);
+    assert.equal(isSubmissionAllowed(DW2P1_SUBJECT, HAROLD, 3, null, now).allowed, true);
+    const maxRes = isSubmissionAllowed(DW2P1_SUBJECT, HAROLD, 4, null, now);
+    assert.equal(maxRes.allowed, false);
+    assert.equal(maxRes.reason, 'Has alcanzado el máximo de intentos del parcial');
+
+    const outRes = isSubmissionAllowed(DW2P1_SUBJECT, HAROLD, 0, null, bogota('2026-11-23T00:00:01'));
+    assert.equal(outRes.allowed, false);
+    assert.equal(outRes.reason, 'El Parcial 1 de DW2 está fuera de tu horario habilitado (hasta el 22/11 23:59)');
+  });
+});
